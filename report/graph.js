@@ -155,7 +155,17 @@ function createGraph(loggerPack){
 	sam(graph);
 	start.sam = 'regular';
 	end.sam = 'regular';
-	
+	graph.nodes.forEach(function(d) {
+	  d.inDegree = 0;
+	  d.outDegree = 0;
+	});
+	graph.links.forEach(function(d) {
+	  graph.getNode(d.source).outDegree++;
+	  graph.getNode(d.target).inDegree++;
+	  //graph.nodes[d].outDegree += 1;
+	  //graph.nodes[d].inDegree += 1;
+	});
+	console.log(graph);
 	return graph;	
 }
 

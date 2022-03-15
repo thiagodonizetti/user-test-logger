@@ -1,6 +1,7 @@
 function clicksHandler(event){
 	//FUNCTIONS	
 	function save(loggerPack){
+		console.log(loggerPack);
 		var ext;
 		//appending header
 		loggerPack.unshift(["Tab id", "Referer", "Timestamp", "Event", "Element Id", "X Path", "Which", "Extra Info"]);
@@ -11,14 +12,16 @@ function clicksHandler(event){
 		stringLoggerPack = stringLoggerPack.replace(/\t+/g, "" );
 		stringLoggerPack = stringLoggerPack.replace(/\n/g, "" );
 		stringLoggerPack = stringLoggerPack.replace(/\],/g, "],\n" );
+		//ERRO: Reclace errado, deixando ]] no final.
 		
+		//ERRO: Ext não usado
 		ext = "-log.json";
 		
 		//transform csv
-		stringLoggerPack = stringLoggerPack.replace(/\],/g, "");
-		stringLoggerPack = stringLoggerPack.replace(/\[/g, "");
+		//stringLoggerPack = stringLoggerPack.replace(/\],/g, "");
+		//stringLoggerPack = stringLoggerPack.replace(/\[/g, "");
 		
-		ext = "-log.csv";
+		//ext = "-log.csv";
 		
 		var blob = new Blob([stringLoggerPack], {type: "text/json;charset=utf-8"});
 		
@@ -26,6 +29,31 @@ function clicksHandler(event){
         var fileName = "" + date.getFullYear() + "-" + (date.getMonth() + 1) + "-" + date.getDate() + "T" + date.getHours() + ":" + date.getMinutes() + ":" + date.getSeconds() + ext;
 			
 		saveAs(blob, fileName);
+	}
+	
+	function saveMetrics(metrics){
+		console.log(metrics);
+		metrics.unshift(["Timestamp", "Distance", "Velocity", "Clicks", "Pause", "Events", "Eccentricity", "Degree", "Time", "Anxiety Level" ]);
+		var stringMetrics = JSON.stringify(metrics, null, '\t');
+		
+		console.log(stringMetrics);
+		
+		stringMetrics = stringMetrics.replace(/\t+/g, "" );
+		stringMetrics = stringMetrics.replace(/\n/g, "" );
+		stringMetrics = stringMetrics.replace(/\],/g, "\n" );
+		stringMetrics = stringMetrics.replace(/\]/g, "\n" );
+		
+		stringMetrics = stringMetrics.replace(/\],/g, "");
+		stringMetrics = stringMetrics.replace(/\[/g, "");
+		
+		ext = "-metrics.csv";
+		var blob = new Blob([stringMetrics], {type: "text/json;charset=utf-8"});
+		
+		var date = new Date(); 
+        var fileName = "" + date.getFullYear() + "-" + (date.getMonth() + 1) + "-" + date.getDate() + "T" + date.getHours() + ":" + date.getMinutes() + ":" + date.getSeconds() + ext;
+			
+		saveAs(blob, fileName);
+		
 	}
 	
 	function onError(error) {
@@ -43,6 +71,10 @@ function clicksHandler(event){
 	function downloadLoggerFile(backPage){
 		save( backPage.loggerPack );
 		backPage.emptyPack(); //VERIFICAR SE BAIXOU
+	}
+	function downloadMetrics(backPage){
+		saveMetrics( backPage.loggerPack.metrics );
+		//backPage.emptyPack(); //VERIFICAR SE BAIXOU
 	}
 	
 	function checkboxUpdate(backPage){
@@ -142,6 +174,17 @@ function clicksHandler(event){
 				}
 			}
 			break;
+		case 'metrics':
+		case 'imageMetrics':
+			/*if(downloadFlag == 1){
+				if(confirm("After downloading the log file, it's going to be deleted. Continue?")){
+					downloadDisabled();
+					reportDisabled();
+					background.then(downloadLoggerFile, onError);	
+				}
+			}*/
+			background.then(downloadMetrics, onError);
+			break;	
 		case 'report':
 		case 'rightReport':
 		case 'imageReport':
@@ -317,6 +360,8 @@ function reportDisabled(){
 //See CSS
 function downloadActive(){
 	var x = document.getElementById("download");
+	x.className = "button download";
+	var x = document.getElementById("metrics");
 	x.className = "button download";
 }
 //See CSS

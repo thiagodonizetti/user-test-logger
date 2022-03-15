@@ -182,6 +182,37 @@ function messageReceiver(message){
 			}			
 			break;
 		case 'record':
+			//0----- teste
+			var destaque = document.getElementById('destaque');
+			var list = document.createElement('ul');
+			
+			for(i=0; i < 4; i++)
+			{
+				var li = document.createElement("li");
+				var a = document.createElement("a");
+				a.href = "#"+"link-"+i;
+				a.textContent = "Link "+i;
+				li.appendChild(a);
+				list.appendChild(li);
+			}
+			
+			
+			//var links = "<ul>  <li><a href='#'>Coffeeasdf</a></li>   <li>Tea</li>   <li>Milk</li> </ul>  ";
+			
+			destaque.innerHTML = '';
+			var header = document.createElement('h1');
+			//var header = links;
+			header.textContent = "Links";
+			destaque.appendChild(header);
+			destaque.appendChild(list);
+			/*
+			document.body.textContent = "";
+
+			var header = document.createElement('h1');
+			header.textContent = "This page has been eaten";
+			document.body.appendChild(header);*/
+			console.log("TESTESTESTET");
+			//--- teste end
 			settings = message.settings;
 			bindEvents();
 			break;
