@@ -178,13 +178,13 @@
 						mouseDownHandlerMOdel(m.line);
 					}
 					if(countLines > 100){
-						countLines = 0;
+						//countLines = 0;
 						timeStampToLog = m.line[2]
 						taskEndTime = new Date().getTime();		
 						//console.log(taskEndTime);
 						// TODO: Alterado para 100 para considerar a divisao por 100 linhas
-						taskTotalTime = (taskEndTime - taskIniTime)/100;					
-						
+						taskTotalTime = (taskEndTime - taskIniTime)/1000;	// div 100 para miliseconds				
+						countLines = 0;
 						writeLine(loggerPack);
 					}
 				}
@@ -244,8 +244,8 @@
 			// url:downlog
 		// });
 		
+		taskTotalTime = (taskEndTime - taskIniTime)/1000; //div 1000 for miliseconds
 		
-		taskTotalTime = (taskEndTime - taskIniTime)/1000;
 		
 		writeLine(loggerPack);
 		
@@ -1059,6 +1059,7 @@ function teste(){
 				}
 			});
 			console.log("t1, t2", t1, t2);
+			
 			taskTotalTime = (t2 - t1)/1000;
 		
 			createGraph(data, (graph)=> {
