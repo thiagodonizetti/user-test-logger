@@ -1,3 +1,5 @@
+	var testing = false;
+
 	var taskIniTime = 0;
 	var taskEndTime = 0;
 	var taskTotalTime = 0;
@@ -177,7 +179,8 @@
 					else if(m.line[3] == "mousedown"){
 						mouseDownHandlerMOdel(m.line);
 					}
-					if(countLines > 100){
+					if(countLines > 100 && !testing){
+						console.log("TESTING FAIL");
 						//countLines = 0;
 						timeStampToLog = m.line[2]
 						taskEndTime = new Date().getTime();		
@@ -211,8 +214,9 @@
 		taskIniTime = new Date().getTime();		
 		console.log(taskIniTime);
 		
-		//teste();
-		
+		if (testing)
+			teste();
+		console.log("testing... ", testing);
 		message.string = "record";
 		settings.recording = 1;
 		message.settings = settings;
@@ -356,23 +360,36 @@
 		console.log(distMeanModel.toFixed(2));
 		//distMeanModel = parseFloat((distSumModel / countMovesModel).toFixed(3));
 		console.log(distMeanModel.toFixed(2));
-		distNorm = parseFloat(((distMeanModel - 0) / (33.383 - 0)).toFixed(2));
+		//checking if the value is the new max value
+		if(distMeanModel >= 33.383)
+			distNorm = 1.0;
+		else
+			distNorm = parseFloat(((distMeanModel - 0) / (33.383 - 0)).toFixed(2));
 		console.log("dist ", distNorm);
 		
 		console.log(velMeanModel);
 		//velMeanModel = distSumModel / (moveTimeSumModel/1000);
-		velNorm = parseFloat(((velMeanModel - 0) / (279.611 - 0)).toFixed(2));
+		if(velMeanModel >= 279.611)
+			velNorm = 1.0;
+		else
+			velNorm = parseFloat(((velMeanModel - 0) / (279.611 - 0)).toFixed(2));
 		console.log("vel ", velNorm);
 		
 		
 		console.log(clicksModel);
-		clickNorm = parseFloat(((clicksModel - 0) / (99 - 0)).toFixed(2));
+		if(clicksModel >= 99)
+			clickNorm = 1.0;
+		else
+			clickNorm = parseFloat(((clicksModel - 0) / (99 - 0)).toFixed(2));
 		console.log("click ", clickNorm);
 		
 		
 		pauseNorm = pauseBefMeanModel / 1000;
 		console.log(pauseNorm);
-		pauseNorm = parseFloat(((pauseNorm - 0) / (18.029 - 0)).toFixed(2));
+		if(pauseNorm >= 18.029)
+			pauseNorm = 1.0;
+		else
+			pauseNorm = parseFloat(((pauseNorm - 0) / (18.029 - 0)).toFixed(2));
 		console.log("pause ", pauseNorm);
 		
 		
@@ -380,6 +397,8 @@
 		eventNorm = 0;
 		if(eventsModel < 392)
 			eventNorm = 0;
+		else if(eventsModel >= 4059)
+			eventNorm = 1.0;
 		else
 			eventNorm = parseFloat(((eventsModel - 392) / (4059 - 392)).toFixed(2));
 		console.log("events ", eventNorm);
@@ -388,6 +407,8 @@
 		eccentricityNorm = 0;
 		if(eccentricityModel < 2)
 			eccentricityNorm = 0;
+		else if(eccentricityModel >= 13)
+			eccentricityNorm = 1.0;
 		else
 			eccentricityNorm = parseFloat(((eccentricityModel - 2) / (13 - 2)).toFixed(2));
 		console.log("eccentr " , eccentricityNorm);
@@ -397,6 +418,8 @@
 		degreeNorm = 0;
 		if(meanDegreeModel < 1.308)
 			degreeNorm = 0;
+		else if(meanDegreeModel >= 1.819)
+			degreeNorm = 1.0;
 		else 
 			degreeNorm = parseFloat(((meanDegreeModel - 1.308) / (1.819 - 1.308)).toFixed(2));
 		console.log("degree ", degreeNorm);
@@ -406,6 +429,8 @@
 		timeNorm = 0;
 		if(taskTotalTime < 257)
 			timeNorm = 0;
+		else if(taskTotalTime >= 2691)
+			timeNorm = 1.0;
 		else
 			timeNorm = parseFloat(((taskTotalTime - 257) / (2691 - 257)).toFixed(2));
 		console.log("time ", timeNorm);
@@ -1014,7 +1039,7 @@ function Queue(){var a=[],b=0;this.getLength=function(){return a.length-b};this.
 function teste(){		
 
 		//var requestURL = 'p14.json';
-		var requestURL = 'p43.json';
+		var requestURL = 'p5.json';
 		console.log(requestURL);
 		var request = new XMLHttpRequest();
 		request.open('GET', requestURL);
@@ -1027,7 +1052,7 @@ function teste(){
 			console.log(arq);		
 			var data = arq;
 			var t1 = data[1][2];
-			var t2 =0
+			var t2 = 0;
 			var cl = 0;
 			data.forEach(function (line) {
 				if(line[4] == "pause"){
