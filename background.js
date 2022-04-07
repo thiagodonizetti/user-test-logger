@@ -33,6 +33,66 @@
 	var	x1=x2=y1=y2= false;
 	
 	var countLines = 0;
+	var deltaTime = 0;
+	
+	// --- alarm timeout
+	
+	
+	function metricsTimeHandler(line){
+		//set timestamp to log (current system time)
+		timeStampToLog = new Date().getTime();	
+		
+		//set taskEndTime to current time
+		taskEndTime = timeStampToLog;
+		
+		//calc taskTotalTime (end - ini)/1000
+		taskTotalTime = (taskEndTime - taskIniTime)/1000;	// div 1000 to miliseconds	
+		
+		if(loggerPack.length > 0)
+			writeLine(loggerPack);
+	}
+	
+	var metricsTimeOut = {
+		timeOut: function(aMessage) {
+			console.log(aMessage);
+			//reset time
+			delete this.timeoutID;
+			this.cancelar();
+			this.setup();
+			
+			//set timestamp to log (current system time)
+			timeStampToLog = new Date().getTime();	
+			
+			//set taskEndTime to current time
+			taskEndTime = timeStampToLog;
+			
+			//calc taskTotalTime (end - ini)/1000
+			taskTotalTime = (taskEndTime - taskIniTime)/1000;	// div 1000 to miliseconds	
+			
+			if(loggerPack.length > 0)
+				writeLine(loggerPack);
+			
+			
+			
+		},
+
+		setup: function() {
+			if (typeof this.timeoutID === 'number') {
+				this.cancelar();
+			}
+			console.log("TIMEOUT");
+
+			this.timeoutID = window.setTimeout(function(msg) {
+				this.timeOut(msg);
+			}.bind(this), 10000, 'Time out!');
+		},
+
+	  cancelar: function() {
+		window.clearTimeout(this.timeoutID);
+	  }
+	};
+	
+	//// --- alarm end
 	
 	function writeLine(data){
 		createGraph(data, (graph)=> {
@@ -168,6 +228,8 @@
 					loggerPack.push(m.line);
 					countLines++;
 					
+					//console.log(m.line[3]);
+					
 					if(m.line[3] == "click")
 					{
 						clicksHandlerModel(m.line);
@@ -179,17 +241,22 @@
 					else if(m.line[3] == "mousedown"){
 						mouseDownHandlerMOdel(m.line);
 					}
-					if(countLines > 100 && !testing){
+					else if(m.line[3] == "metrics"){
+						metricsTimeHandler(m.line);
+					}
+					//if(countLines > 100 && !testing){
+					/* if(m.line[2] - deltaTime > 10000 && !testing){
 						console.log("TESTING FAIL");
 						//countLines = 0;
-						timeStampToLog = m.line[2]
+						timeStampToLog = m.line[2];
 						taskEndTime = new Date().getTime();		
 						//console.log(taskEndTime);
 						// TODO: Alterado para 100 para considerar a divisao por 100 linhas
 						taskTotalTime = (taskEndTime - taskIniTime)/1000;	// div 100 para miliseconds				
 						countLines = 0;
+						deltaTime = m.line[2];
 						writeLine(loggerPack);
-					}
+					} */
 				}
 				else{
 					if(blobs[m.id] == undefined){
@@ -211,11 +278,15 @@
 	}
 	
 	function callRecordCS(){
+		
 		taskIniTime = new Date().getTime();		
 		console.log(taskIniTime);
+		deltaTime = taskIniTime;
 		
 		if (testing)
 			teste();
+		//else
+		//	metricsTimeOut.setup();
 		console.log("testing... ", testing);
 		message.string = "record";
 		settings.recording = 1;
@@ -234,6 +305,7 @@
 	}
 	
 	function callPauseCS(){
+		//metricsTimeOut.cancelar();
 		taskEndTime = new Date().getTime();		
 		console.log(taskEndTime);
 		console.log(distSumModel);
@@ -248,6 +320,7 @@
 			// url:downlog
 		// });
 		
+		timeStampToLog = taskEndTime;	
 		taskTotalTime = (taskEndTime - taskIniTime)/1000; //div 1000 for miliseconds
 		
 		
@@ -1039,7 +1112,9 @@ function Queue(){var a=[],b=0;this.getLength=function(){return a.length-b};this.
 function teste(){		
 
 		//var requestURL = 'p14.json';
+		
 		var requestURL = 'p5.json';
+		
 		console.log(requestURL);
 		var request = new XMLHttpRequest();
 		request.open('GET', requestURL);
@@ -1053,7 +1128,7 @@ function teste(){
 			var data = arq;
 			var t1 = data[1][2];
 			var t2 = 0;
-			var cl = 0;
+			var deltaTime = data[1][2];
 			data.forEach(function (line) {
 				if(line[4] == "pause"){
 					t2 = line[2];
@@ -1070,9 +1145,12 @@ function teste(){
 				else if(line[3] == "mousedown"){
 					mouseDownHandlerMOdel(line);
 				}
-				cl++;
-				if(cl > 1000){
-					cl = 0;
+				//deltaTime = line[2] - t1;
+				//console.log("delta, t2, difference", deltaTime, line[2], line[2] - deltaTime);
+				if(line[2] - deltaTime > 10000){
+					console.log("delta, t2, difference", deltaTime, line[2], line[2] - deltaTime);
+					console.log("Delta time", deltaTime);
+					deltaTime = line[2];
 					t2 = line[2];
 					timeStampToLog = t2;
 					console.log(timeStampToLog);

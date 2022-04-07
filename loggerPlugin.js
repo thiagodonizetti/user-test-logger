@@ -1,6 +1,7 @@
 var packFile = "";
 var ownId = 0;
 var seen = 0;
+var timeStart = 0;
 
 var settings = {
 	"interval" : 500,
@@ -141,9 +142,15 @@ var methods = {
 
 	record : function (event) {
 		//verifying if it is the first time the user is seeing the webpage
+		
 		if(!seen){
 			seen = 1;
 			$(window).trigger('pageview');
+			console.log("pageview");
+			if(!timeStart){
+				metricsTimeOut.setup();
+				timeStart = 1;
+			}
 			
 			//generate blob
 			var blob = screenshotPage();
@@ -171,10 +178,58 @@ function bindEvents(){
 	}	
 }
 
-function messageReceiver(message){	
+// --- alarm timeout
+	
+	var metricsTimeOut = {
+		timeOut: function(aMessage) {
+			console.log(aMessage);
+			//reset time
+			delete this.timeoutID;
+			this.cancelar();
+			this.setup();
+			
+			//call background metrics	
+			var logLine = [];
+
+			logLine[0] = methods.getOwnId();
+			logLine[1] = null;
+			logLine[2] = methods.getTimeStamp(null);
+			logLine[3] = "metrics";
+			logLine[4] = null;
+			logLine[5] = null;
+			logLine[6] = null;
+			logLine[7] = null;
+			methods.sendLine(logLine);
+			
+			
+			
+		},
+
+		setup: function() {
+			if (typeof this.timeoutID === 'number') {
+				this.cancelar();
+			}
+			console.log("TIMEOUT");
+
+			this.timeoutID = window.setTimeout(function(msg) {
+				this.timeOut(msg);
+			}.bind(this), 1000, 'Time out!');
+		},
+
+	  cancelar: function() {
+		window.clearTimeout(this.timeoutID);
+	  }
+	};
+	
+	//// --- alarm end
+
+function messageReceiver(message){
+	
 	var action = message.string;	
+	console.log(action);
 	switch(action){
 		case 'init':
+			//metricsTimeOut.setup();
 			settings = message.settings;
 			ownId = message.id;
 			if(settings.recording == 1){
@@ -182,8 +237,12 @@ function messageReceiver(message){
 			}			
 			break;
 		case 'record':
+			if(!timeStart){
+				metricsTimeOut.setup();
+				timeStart = 1;
+			}
 			//0----- teste
-			var destaque = document.getElementById('destaque');
+			/*var destaque = document.getElementById('destaque');
 			var list = document.createElement('ul');
 			
 			for(i=0; i < 4; i++)
@@ -211,12 +270,13 @@ function messageReceiver(message){
 			var header = document.createElement('h1');
 			header.textContent = "This page has been eaten";
 			document.body.appendChild(header);*/
-			console.log("TESTESTESTET");
+			//console.log("TESTESTESTET");
 			//--- teste end
 			settings = message.settings;
 			bindEvents();
 			break;
 		case 'pause':
+			metricsTimeOut.cancelar();
 			settings = message.settings;
 			seen = 0;
 			for(events in settings.eventAndFlags){
