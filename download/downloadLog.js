@@ -1,4 +1,5 @@
 function saveMetrics(metrics){
+	return new Promise(function(resolve, reject) {
 		console.log(metrics);
 		metrics.unshift(["Timestamp","Distance", "Velocity", "Clicks", "Pause", "Events", "Eccentricity", "Degree", "Time" ]);
 		var stringMetrics = JSON.stringify(metrics, null, '\t');
@@ -18,16 +19,19 @@ function saveMetrics(metrics){
 		
 		var date = new Date(); 
         var fileName = "" + date.getFullYear() + "-" + (date.getMonth() + 1) + "-" + date.getDate() + "T" + date.getHours() + ":" + date.getMinutes() + ":" + date.getSeconds() + ext;
-			
+		console.log(blob);	
 		saveAs(blob, fileName);
-		
-		
-	}
+		resolve('a');
+	});
+}
 
 function init(backPage){
-	
 	console.log(backPage);
-	saveMetrics(backPage.loggerPack.metrics);
+	Promise.all([saveMetrics(backPage.loggerPack.metrics)]).then(function(){
+		console.log("promise");
+		myPort.postMessage({done: 1});
+	});
+	
 	//Saving dot file
 	/*var blob = new Blob([dotFile], {type: "text/csv;charset=utf-8"});
 	
@@ -36,7 +40,7 @@ function init(backPage){
 	
 	//saveAs(blob, filename, true);*/
 	
-	myPort.postMessage({done: 1});
+	//myPort.postMessage({done: 1});
 }
 
 var background = browser.runtime.getBackgroundPage();

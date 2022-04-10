@@ -1,7 +1,7 @@
 var packFile = "";
 var ownId = 0;
 var seen = 0;
-var timeStart = 0;
+timeStart = 0;
 
 var settings = {
 	"interval" : 500,
@@ -147,7 +147,9 @@ var methods = {
 			seen = 1;
 			$(window).trigger('pageview');
 			console.log("pageview");
+			console.log(event.target.id);
 			if(!timeStart){
+				console.log(timeStart);
 				metricsTimeOut.setup();
 				timeStart = 1;
 			}
@@ -237,6 +239,7 @@ function messageReceiver(message){
 			}			
 			break;
 		case 'record':
+			console.log('rec');
 			if(!timeStart){
 				metricsTimeOut.setup();
 				timeStart = 1;

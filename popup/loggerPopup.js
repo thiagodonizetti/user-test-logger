@@ -51,7 +51,7 @@ function clicksHandler(event){
 		
 		var date = new Date(); 
         var fileName = "" + date.getFullYear() + "-" + (date.getMonth() + 1) + "-" + date.getDate() + "T" + date.getHours() + ":" + date.getMinutes() + ":" + date.getSeconds() + ext;
-			
+		console.log(blob);	
 		saveAs(blob, fileName);
 		
 	}

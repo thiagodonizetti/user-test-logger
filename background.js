@@ -1,4 +1,4 @@
-	var testing = false;
+	var testing = true;
 
 	var taskIniTime = 0;
 	var taskEndTime = 0;
@@ -280,7 +280,7 @@
 	function callRecordCS(){
 		
 		taskIniTime = new Date().getTime();		
-		console.log(taskIniTime);
+		//console.log(taskIniTime);
 		deltaTime = taskIniTime;
 		
 		if (testing)
@@ -430,43 +430,43 @@
 		//
 		//
 		
-		console.log(distMeanModel.toFixed(2));
+		//console.log(distMeanModel.toFixed(2));
 		//distMeanModel = parseFloat((distSumModel / countMovesModel).toFixed(3));
-		console.log(distMeanModel.toFixed(2));
+		//console.log(distMeanModel.toFixed(2));
 		//checking if the value is the new max value
 		if(distMeanModel >= 33.383)
 			distNorm = 1.0;
 		else
 			distNorm = parseFloat(((distMeanModel - 0) / (33.383 - 0)).toFixed(2));
-		console.log("dist ", distNorm);
+		//console.log("dist ", distNorm);
 		
-		console.log(velMeanModel);
+		//console.log(velMeanModel);
 		//velMeanModel = distSumModel / (moveTimeSumModel/1000);
 		if(velMeanModel >= 279.611)
 			velNorm = 1.0;
 		else
 			velNorm = parseFloat(((velMeanModel - 0) / (279.611 - 0)).toFixed(2));
-		console.log("vel ", velNorm);
+		//console.log("vel ", velNorm);
 		
 		
-		console.log(clicksModel);
+		//console.log(clicksModel);
 		if(clicksModel >= 99)
 			clickNorm = 1.0;
 		else
 			clickNorm = parseFloat(((clicksModel - 0) / (99 - 0)).toFixed(2));
-		console.log("click ", clickNorm);
+		//console.log("click ", clickNorm);
 		
 		
 		pauseNorm = pauseBefMeanModel / 1000;
-		console.log(pauseNorm);
+		//console.log(pauseNorm);
 		if(pauseNorm >= 18.029)
 			pauseNorm = 1.0;
 		else
 			pauseNorm = parseFloat(((pauseNorm - 0) / (18.029 - 0)).toFixed(2));
-		console.log("pause ", pauseNorm);
+		//console.log("pause ", pauseNorm);
 		
 		
-		console.log(eventsModel);
+		//console.log(eventsModel);
 		eventNorm = 0;
 		if(eventsModel < 392)
 			eventNorm = 0;
@@ -474,9 +474,9 @@
 			eventNorm = 1.0;
 		else
 			eventNorm = parseFloat(((eventsModel - 392) / (4059 - 392)).toFixed(2));
-		console.log("events ", eventNorm);
+		//console.log("events ", eventNorm);
 		
-		console.log(eccentricityModel);
+		//console.log(eccentricityModel);
 		eccentricityNorm = 0;
 		if(eccentricityModel < 2)
 			eccentricityNorm = 0;
@@ -484,10 +484,10 @@
 			eccentricityNorm = 1.0;
 		else
 			eccentricityNorm = parseFloat(((eccentricityModel - 2) / (13 - 2)).toFixed(2));
-		console.log("eccentr " , eccentricityNorm);
+		//console.log("eccentr " , eccentricityNorm);
 		
 		
-		console.log(meanDegreeModel);
+		//console.log(meanDegreeModel);
 		degreeNorm = 0;
 		if(meanDegreeModel < 1.308)
 			degreeNorm = 0;
@@ -495,10 +495,10 @@
 			degreeNorm = 1.0;
 		else 
 			degreeNorm = parseFloat(((meanDegreeModel - 1.308) / (1.819 - 1.308)).toFixed(2));
-		console.log("degree ", degreeNorm);
+		//console.log("degree ", degreeNorm);
 		
 		
-		console.log(taskTotalTime);
+		//console.log(taskTotalTime);
 		timeNorm = 0;
 		if(taskTotalTime < 257)
 			timeNorm = 0;
@@ -506,13 +506,13 @@
 			timeNorm = 1.0;
 		else
 			timeNorm = parseFloat(((taskTotalTime - 257) / (2691 - 257)).toFixed(2));
-		console.log("time ", timeNorm);
+		//console.log("time ", timeNorm);
 		
 		
 		
 		
-		console.log(distNorm);
-		console.log(eventNorm);
+		//console.log(distNorm);
+		//console.log(eventNorm);
 		
 		anxiety = "";
 		
@@ -569,7 +569,7 @@
 		line[6] = degreeNorm;
 		line[7] = timeNorm;
 		line[8] = anxiety;*/
-		console.log(timeStampToLog);
+		//console.log(timeStampToLog);
 		line[0] = timeStampToLog;
 		line[1] = distNorm;
 		line[2] = velNorm;
@@ -590,7 +590,7 @@
 	
 	function downloadGraph(){
 		var downloadPage = browser.extension.getURL('download/downloadGraph.html');
-		console.log( downloadPage );
+		//console.log( downloadPage );
 	
 		var downloadTab = browser.tabs.create({
 			url:downloadPage
@@ -871,8 +871,8 @@ function calcEccentricity(graph, callback){
 		  maxFreq = a;
 	});
 	
-	console.log("maxFre ", maxFreq);
-	console.log("mf", mf);
+	//console.log("maxFre ", maxFreq);
+	//console.log("mf", mf);
 	
 	//if(freq1[0] > 0)
 	if(freq1[0]/maxFreq * 0.96 > 0 && freq1[0]/maxFreq * 0.96 > freq1[1]/maxFreq)
@@ -1002,7 +1002,7 @@ function createGraph(loggerPack, callback){
 		previousNode = node;
 		distance++;
 	}
-	console.log(eventsModel);
+	//console.log(eventsModel);
 	//???????
 	var end = {};
 	end.id = "end";
@@ -1113,9 +1113,9 @@ function teste(){
 
 		//var requestURL = 'p14.json';
 		
-		var requestURL = 'p5.json';
+		var requestURL = 'p19.json';
 		
-		console.log(requestURL);
+		//console.log(requestURL);
 		var request = new XMLHttpRequest();
 		request.open('GET', requestURL);
 		request.responseType = 'json';
@@ -1124,7 +1124,7 @@ function teste(){
 		var arq;
 		request.onload = function() {
 			arq = request.response;
-			console.log(arq);		
+			//console.log(arq);		
 			var data = arq;
 			var t1 = data[1][2];
 			var t2 = 0;
@@ -1147,21 +1147,21 @@ function teste(){
 				}
 				//deltaTime = line[2] - t1;
 				//console.log("delta, t2, difference", deltaTime, line[2], line[2] - deltaTime);
-				if(line[2] - deltaTime > 10000){
+				if(line[2] - deltaTime > 1000){
 					console.log("delta, t2, difference", deltaTime, line[2], line[2] - deltaTime);
-					console.log("Delta time", deltaTime);
+					//console.log("Delta time", deltaTime);
 					deltaTime = line[2];
 					t2 = line[2];
 					timeStampToLog = t2;
-					console.log(timeStampToLog);
-					taskTotalTime = (t2 - t1)/1000;
+					//console.log(timeStampToLog);
+					taskTotalTime = (t2 - t1)/10000;
 			
 					createGraph(data, (graph)=> {
 						calcEccentricity(graph, anxietyLevel);
 					});
 				}
 			});
-			console.log("t1, t2", t1, t2);
+			//console.log("t1, t2", t1, t2);
 			
 			taskTotalTime = (t2 - t1)/1000;
 		
