@@ -194,13 +194,13 @@ function bindEvents(){
 			var logLine = [];
 
 			logLine[0] = methods.getOwnId();
-			logLine[1] = null;
+			logLine[1] = "-";
 			logLine[2] = methods.getTimeStamp(null);
 			logLine[3] = "metrics";
-			logLine[4] = null;
-			logLine[5] = null;
-			logLine[6] = null;
-			logLine[7] = null;
+			logLine[4] = "-";
+			logLine[5] = "-";
+			logLine[6] = "-";
+			logLine[7] = "-";
 			methods.sendLine(logLine);
 			
 			
@@ -215,7 +215,7 @@ function bindEvents(){
 
 			this.timeoutID = window.setTimeout(function(msg) {
 				this.timeOut(msg);
-			}.bind(this), 1000, 'Time out!');
+			}.bind(this), 10000, 'Time out!');
 		},
 
 	  cancelar: function() {

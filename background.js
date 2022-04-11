@@ -1,4 +1,4 @@
-	var testing = true;
+	var testing = false;
 
 	var taskIniTime = 0;
 	var taskEndTime = 0;
@@ -174,6 +174,7 @@
 	var webPagesIds = 0;
 	var connections = 0;
     var loggerPack = [];
+	localStorage['metrics'] = "";
 	loggerPack.metrics = [];
 	var blobs = {};
 	var portsFromCS = {};
@@ -279,6 +280,9 @@
 	
 	function callRecordCS(){
 		
+		localStorage["teste"] = "deu certo";
+		var a = localStorage['teste'];
+		//console.log(a);
 		taskIniTime = new Date().getTime();		
 		//console.log(taskIniTime);
 		deltaTime = taskIniTime;
@@ -330,6 +334,7 @@
 		settings.recording = 0;
 		message.settings = settings;
 		console.log("PAUSEEEEE");
+		console.log(localStorage['metrics']);
 		//console.log(clicksModel);
 		
 		//console.log(vetModel);
@@ -518,44 +523,44 @@
 		
 		if(distNorm < 0.32){
 			if(eventNorm  < 0.18 ){
-				console.log("High Anxiety");
+				//console.log("High Anxiety");
 				anxiety = "High Anxiety";
 			}
 			else if(velNorm < 0.19){
-				console.log("No Anxiety");
+				//console.log("No Anxiety");
 				anxiety = "No Anxiety";
 			}
 			else if(clickNorm < 0.34){
-				console.log("No Anxiety");
+				//console.log("No Anxiety");
 				anxiety =  "No Anxiety";
 			}
 			else {
-				console.log("High Anxiety");
+				//console.log("High Anxiety");
 				anxiety =  "High Anxiety";
 			}
 		}
 		else {
 			if(pauseNorm < 0.12){
 				if(timeNorm < 0.15){
-					console.log("High Anxiety");
+					//console.log("High Anxiety");
 					anxiety =  "High Anxiety";
 				}
 				else if(eccentricityNorm < 0.05){
-					console.log("Low Anxiety");
+					//console.log("Low Anxiety");
 					anxiety =  "Low Anxiety";
 				}
 				else{
-					console.log("No Anxiety");
+					//console.log("No Anxiety");
 					anxiety =  "No Anxiety";
 				}
 			}
 			else if(degreeNorm < 0.66){
-				console.log("Low Anxiety");
+				//console.log("Low Anxiety");
 				anxiety =  "Low Anxiety";
 				
 			}
 			else{
-				console.log("No Anxiety");
+				//console.log("No Anxiety");
 				anxiety =  "No Anxiety";
 			}
 		}
@@ -581,6 +586,13 @@
 		line[8] = timeNorm;
 		line[9] = anxiety;
 		loggerPack.metrics.push(line);
+		
+		//if(loggerPack.metrics.length > 100)
+		//	loggerPack.metrics = [];
+		
+		localStorage['metrics'] = localStorage['metrics'] + ";" + line;
+		localStorage ['log'] = loggerPack;
+		//console.log(localStorage['metrics']);
 		
  		
 		//loggerPack.metrics.push(distMeanModel + "," + velMeanModel + "," +  anxiety);
@@ -898,6 +910,8 @@ function calcEccentricity(graph, callback){
 	});*/
 	//console.log(peaks);
 	eccentricityModel = peaks;
+	graph = [];
+	freq1 = [];
 	return callback(peaks);
 		
 	/* var freq = [];
@@ -1113,7 +1127,7 @@ function teste(){
 
 		//var requestURL = 'p14.json';
 		
-		var requestURL = 'p19.json';
+		var requestURL = 'p7.json';
 		
 		//console.log(requestURL);
 		var request = new XMLHttpRequest();
@@ -1154,7 +1168,7 @@ function teste(){
 					t2 = line[2];
 					timeStampToLog = t2;
 					//console.log(timeStampToLog);
-					taskTotalTime = (t2 - t1)/10000;
+					taskTotalTime = (t2 - t1)/1000;
 			
 					createGraph(data, (graph)=> {
 						calcEccentricity(graph, anxietyLevel);
