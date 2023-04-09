@@ -286,7 +286,7 @@
 		taskIniTime = new Date().getTime();		
 		//console.log(taskIniTime);
 		deltaTime = taskIniTime;
-		
+		readJsonTree();
 		if (testing)
 			teste();
 		//else
@@ -1123,11 +1123,65 @@ function getTimestamp(time){
 //code.iamkate.com
 function Queue(){var a=[],b=0;this.getLength=function(){return a.length-b};this.isEmpty=function(){return 0==a.length};this.enqueue=function(b){a.push(b)};this.dequeue=function(){if(0!=a.length){var c=a[b];2*++b>=a.length&&(a=a.slice(b),b=0);return c}};this.peek=function(){return 0<a.length?a[b]:void 0}};
 
+
+function readJsonTree(){		
+
+	//var requestURL = 'p14.json';
+	
+	var requestURL = 'tree.json';
+	
+	//console.log(requestURL);
+	var request = new XMLHttpRequest();
+	request.open('GET', requestURL);
+	request.responseType = 'json';
+	request.send();
+	//console.log(request);
+	var tree;
+	vals = {'Mean Click Duration (sec)': 0.7, 'Mean Degree': 2, 'Mean Stroke Duration (sec)': 9, 'Task Time (sec)': 3000, 
+	'Total Time Typing (sec)': 115, 	'Events Number': 3000 
+	};
+	request.onload = function() {
+		tree = request.response;
+		//console.log(arq);		
+		val = 30000;
+		while(tree.rule !== undefined )
+		{
+		  r = tree.rule.split(" ")
+		  if(r[r.length-2] === '<='){
+			//console.log('menor igual')
+			rule = ""
+			for(i = 0; i < r.length-2; i++)
+			{
+			  rule = rule + r[i] + " "
+			}
+			rule = rule.trim()
+			//console.log(rule)
+			value = r[r.length-1]
+			pos = 'b'
+			//console.log(vals)
+			console.log(vals[rule] + ' ' + rule + ' <= ' + value)
+			if(vals[rule] <= value){
+				tree = tree.left
+			}
+			else{
+				tree = tree.right
+			}
+		  }
+		  else if(r[r.length-2] === '>'){
+		  console.log('maior')
+		  }
+		  else{
+			console.log('igual')
+		  }
+		}
+		console.log(tree.id, tree.Class)
+	}
+}
 function teste(){		
 
 		//var requestURL = 'p14.json';
 		
-		var requestURL = 'p7.json';
+		var requestURL = 'p01.json';
 		
 		//console.log(requestURL);
 		var request = new XMLHttpRequest();
@@ -1144,6 +1198,7 @@ function teste(){
 			var t2 = 0;
 			var deltaTime = data[1][2];
 			data.forEach(function (line) {
+				loggerPack.push(line);
 				if(line[4] == "pause"){
 					t2 = line[2];
 				}
