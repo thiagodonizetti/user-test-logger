@@ -1,5 +1,5 @@
-	var testing = false;
-
+	var testing = true;
+	var tree = "";
 	var taskIniTime = 0;
 	var taskEndTime = 0;
 	var taskTotalTime = 0;
@@ -11,7 +11,13 @@
 	var pauseBefSumModel = 0;
 	var pauseBefMeanModel = 0;
 	
-
+	// New tree model including mean click duration
+	var mouseDownTime = 0;
+	var mouseup = 0;
+	var clickDuration = 0;
+	var updown = 0;
+	var clickDurationSum = 0;
+	var meanClickDuration = 0;
 	
 	var vetModel = [];
 	
@@ -24,6 +30,19 @@
 	var currMoveModel = 0;
 	var moveTimeSumModel = 0;
 	
+	//--- new tree model including stroke
+	var strokeLength = 0;
+	var strokeDuration = 0;
+	var straightness = 0;
+	var pauseThreshold = 1000;
+	var strokeIniTime = 0;
+	var x1Stroke = y1Stroke = xNStroke = yNStroke = 0;
+	var strokeLengthSum = 0;
+	var strokeDurationSum = 0;
+	var straightnessSum = 0;
+	var strokes = 0;
+	var meanStrokeDuration = 0;
+	 
 	
 	var meanDegreeModel = 0;
 	var eventsModel = 0;
@@ -35,7 +54,25 @@
 	var countLines = 0;
 	var deltaTime = 0;
 	
+	//--- new tree model including key typing metrics
+	var backspace = 0;
+	var del = 0;
+	var keyThreshold = 60000;
+	
+	var firstKey = 0;
+	var lastKey = 0;
+	var keysNumber = 0;
+	var totalKeysNumber = 0;
+	var keysTotalTime = 0;
+	var velTotal = 0;
+	var intervalNumber = 0;
+	//------------
+	
 	// --- alarm timeout
+	
+	
+	
+	
 	
 	
 	function metricsTimeHandler(line){
@@ -104,11 +141,47 @@
 		return (Math.sqrt( Math.pow((x2-x1), 2) + Math.pow((y2-y1), 2)));
 	}
 
+	//--- new tree model including key typing metrics
+	function keydownHandler(line){
+	}
+	
+	function keyMetricsHandler(){
+		//console.log("keys tempo", parseInt(line[2]) - lastKey);
+		time = lastKey - firstKey;
+		if( time == 0){
+			velKey = 1;
+		}
+		else{
+			velKey = keysNumber / (time / 60000);
+		}
+			
+		console.log("Tempo, numero, vel ", time, keysNumber, velKey, intervalNumber+1, totalKeysNumber + keysNumber);
+		
+		velTotal += velKey;
+		keysTotalTime += time;
+		totalKeysNumber += keysNumber;
+		intervalNumber += 1;
+		
+	}
+	//--- new tree model including key typing metrics
 	
 	
 	function mouseDownHandlerMOdel(line){
+		//New Tree: Including strokeDuration
+		mouseDownTime =  parseFloat(line[2]);
+		
+		if(strokeLength == 0){
+			strokeDuration = straightness = 0;
+			console.log("stroke 0 MDOWN");
+		}
+		else{
+			strokeDuration = parseInt(line[2]) - strokeIniTime;
+			straightness  =  Math.sqrt(Math.pow(x1Stroke - xNStroke, 2) + Math.pow(y1Stroke - yNStroke, 2))/strokeLength;	
+			console.log("stroke MDOWN: "+mouseDownTime + "- " + strokeDuration + " - " + strokeDurationSum/strokes );	
+		}
+		
 		if(currMoveModel != 0){
-			pause = parseFloat(line[2]) - currMoveModel;			
+			pause = mouseDownTime - currMoveModel;			
 		}
 		else{
 			pause = 0;
@@ -116,12 +189,33 @@
 		pauseBefModel++;
 		pauseBefSumModel += pause;
 		pauseBefMeanModel = pauseBefSumModel / pauseBefModel;
+		
+		//New Tree: Including strokeDuration
+		strokeDurationSum += strokeDuration;
+		strokeLengthSum += strokeLength;
+		straightnessSum += straightness;
+		console.log("stroke antes: "+strokes);	
+		strokes += 1;
+		meanStrokeDuration = (strokeDurationSum/strokes)/1000;
+		console.log("stroke depois: "+strokes);			
+		strokeLength =  strokeIniTime = 0;
 	}
 	
 	function clicksHandlerModel(line){
 		//debugger;
 		clicksModel++;		
 		//console.log(line);
+	}
+	function mouseUpHandler(line){
+		mouseup = parseFloat(line[2]);
+		clickDuration = mouseup - mouseDownTime;
+		clickDurationSum += clickDuration;
+		//print(lineNumber, mousedown, mouseup, data[3], clickDuration, clickDurationSum)
+		mouseDownTime = 0;
+		mouseup = 0;
+		updown += 1;
+		meanClickDuration = (clickDurationSum / updown)/1000;
+		//console.log("clickk----------"+ meanClickDuration);
 	}
 	
 	function moveHandlerModel(line){
@@ -138,11 +232,30 @@
 			//console.log(coord[1].split("|"));
 			//console.log(parseFloat(coord[1].split("|")));
 			y1 = parseInt(coord[1].split("|")[0]);
-		}
-		else{
 			
+			//New Tree: Including strokeDuration
+			if(strokeIniTime == 0){
+				strokeIniTime = parseInt(line[2]);
+				x1Stroke = x1;
+				y1Stroke = y1;
+			}	
+			strokeLength += Math.sqrt( Math.pow(x1, 2) + Math.pow(y1,2) );
+			//Math.sqrt( Math.pow((x2-x1), 2) 
+		}
+		else{			
 			x2 =  parseInt(coord[0]);
 			y2 = parseInt(coord[1].split("|")[0]);
+			
+			//New Tree: Including strokeDuration
+			if(strokeIniTime == 0){
+				strokeIniTime = parseInt(line[2]);;
+				x1Stroke = x2;
+				y1Stroke = y2;
+			}	
+			xNStroke = x2;
+			yNStroke = y2;
+			strokeLength += Math.sqrt( Math.pow(x2, 2) + Math.pow(y2,2) );
+			
 			//calc distancia
 			dist = euclideanDistance(x1,y1,x2,y2);
 			distSumModel += dist;			
@@ -230,6 +343,13 @@
 					countLines++;
 					
 					//console.log(m.line[3]);
+					if(keysNumber > 0){
+						if(parseInt(m.line[2]) - lastKey > keyThreshold){
+							keyMetricsHandler();
+							keysNumber = 0;
+							
+						}
+					}
 					
 					if(m.line[3] == "click")
 					{
@@ -244,6 +364,62 @@
 					}
 					else if(m.line[3] == "metrics"){
 						metricsTimeHandler(m.line);
+					}
+					//New Tree: Including mean click duration
+					else if(m.line[3] == "mouseup" && mouseDownTime != 0){
+						//console.log("---mousoeup-----")
+						mouseUpHandler(m.line);
+					}
+					else if(m.line[3] == "mouseup"){
+						//console.log("---mousoeup-----")
+						mouseUpHandler(m.line);
+					}
+					else if(m.line[3] == "keydown"){
+						if(keysNumber > 0){
+							if(parseInt(m.line[2]) - lastKey > keyThreshold){
+								keyMetricsHandler();
+								keysNumber = 1;
+								firstKey = lastKey = parseInt(m.line[2]);
+							}
+							else{
+								lastKey = parseInt(m.line[2]);
+								keysNumber += 1;
+							}
+						}
+						else {
+							firstKey = lastKey = parseInt(m.line[2]);
+							keysNumber = 1;							
+						}
+						
+					}
+					//New Tree: Including strokeDuration
+					else{
+						current_time = parseFloat(m.line[2]);
+						
+						if(strokeLength > 0 && current_time - currMoveModel > pauseThreshold){
+							
+							if(strokeLength == 0){
+								strokeDuration = straightness = 0;
+								console.log("stroke 0 PAUSE: "+current_time + "- " + strokeDuration + " - " + strokeDurationSum/strokes );
+							}
+							else{
+								strokeDuration = parseInt(line[2]) - strokeIniTime;
+								straightness  =  Math.sqrt(Math.pow(x1Stroke - xNStroke, 2) + Math.pow(y1Stroke - yNStroke, 2))/strokeLength;	
+								console.log("stroke 0 PAUSE 1: "+current_time + "- " + strokeDuration + " - " + strokeDurationSum/strokes );								
+							}
+							
+							strokeDurationSum += strokeDuration;
+							strokeLengthSum += strokeLength;
+							straightnessSum += straightness;
+							strokeLength =  strokeIniTime = 0;
+							strokes += 1;
+							meanStrokeDuration = (strokeDurationSum/strokes) / 1000;
+							console.log("stroke 0 PAUSE 2: "+current_time + "- " + strokeDuration + " - " + strokeDurationSum/strokes );		
+							//strokeLength =  strokeIniTime = 0
+							
+							
+						}
+						
 					}
 					//if(countLines > 100 && !testing){
 					/* if(m.line[2] - deltaTime > 10000 && !testing){
@@ -286,7 +462,7 @@
 		taskIniTime = new Date().getTime();		
 		//console.log(taskIniTime);
 		deltaTime = taskIniTime;
-		readJsonTree();
+		//readJsonTree();
 		if (testing)
 			teste();
 		//else
@@ -315,6 +491,10 @@
 		console.log(distSumModel);
 		console.log(countMovesModel);
 		//loggerPack.teste = "Teste logger";
+		if(keysNumber > 0){
+			keyMetricsHandler();
+		} 
+		
 		
 		//console.log(loggerPack);
 		// var downlog = browser.extension.getURL('download/downloadLog.html');
@@ -1124,23 +1304,116 @@ function getTimestamp(time){
 function Queue(){var a=[],b=0;this.getLength=function(){return a.length-b};this.isEmpty=function(){return 0==a.length};this.enqueue=function(b){a.push(b)};this.dequeue=function(){if(0!=a.length){var c=a[b];2*++b>=a.length&&(a=a.slice(b),b=0);return c}};this.peek=function(){return 0<a.length?a[b]:void 0}};
 
 
-function readJsonTree(){		
-
-	//var requestURL = 'p14.json';
+function readTreeFile(){
 	
-	var requestURL = 'tree.json';
+	var requestURL = 'data//tree.json';
 	
 	//console.log(requestURL);
 	var request = new XMLHttpRequest();
 	request.open('GET', requestURL);
 	request.responseType = 'json';
 	request.send();
-	//console.log(request);
-	var tree;
-	vals = {'Mean Click Duration (sec)': 0.7, 'Mean Degree': 2, 'Mean Stroke Duration (sec)': 9, 'Task Time (sec)': 3000, 
-	'Total Time Typing (sec)': 115, 	'Events Number': 3000 
-	};
+	console.log(request);
+	//var tree;
+	//vals = {'Mean Click Duration (sec)': meanClickDuration, 'Mean Degree': meanDegreeModel, 'Mean Stroke Duration (sec)': meanStrokeDuration, 'Task Time (sec)': taskTotalTime, 'Total Time Typing (sec)': keysTotalTime, 	'Events Number': countLines };
+	//var pred_class = "";
+	//console.log(vals['Mean Click Duration (sec)']);
+	//console.log("clicks------" + meanClickDuration);
 	request.onload = function() {
+		tree = request.response;
+		console.log(tree);
+	}
+}
+function readJsonTree(){	
+
+	vals = {'Mean Click Duration (sec)': meanClickDuration, 'Mean Degree': meanDegreeModel, 'Mean Stroke Duration (sec)': meanStrokeDuration, 'Task Time (sec)': taskTotalTime, 'Total Time Typing (sec)': keysTotalTime, 'Events Number': countLines};
+	var pred_class = "";
+	var node = tree;
+	//console.log(node);
+	//console.log(tree);
+	while(node.rule !== undefined ){
+	  r = node.rule.split(" ")
+	  if(r[r.length-2] === '<='){
+		//console.log('menor igual')
+		rule = ""
+		for(i = 0; i < r.length-2; i++){
+		  rule = rule + r[i] + " "
+		}
+		rule = rule.trim()
+		//console.log(rule)
+		value = r[r.length-1]
+		pos = 'b'
+		//console.log(vals)
+		console.log(vals[rule] + ' ' + rule + ' <= ' + value)
+		if(vals[rule] <= value){
+			node = node.left
+		}
+		else{
+			node = node.right
+		}
+	  }
+	  else if(r[r.length-2] === '>'){
+		console.log('maior')
+	  }
+	  else{
+		console.log('igual')
+	  }
+	}
+	console.log(node.id, node.Class)
+	pred_class = node.Class;
+	console.log(pred_class);
+	
+	console.log("-----------class "+ pred_class);
+	var line = [];
+	/*line[0] = distNorm;
+	line[1] = velNorm;
+	line[2] = clickNorm;
+	line[3] = pauseNorm;
+	line[4] = eventNorm;
+	line[5] = eccentricityNorm;
+	line[6] = degreeNorm;
+	line[7] = timeNorm;
+	line[8] = anxiety;*/
+	//console.log(timeStampToLog);
+	line[0] = timeStampToLog;
+	line[1] = meanClickDuration;
+	line[2] = meanDegreeModel;
+	line[3] = meanStrokeDuration;
+	line[4] = taskTotalTime;
+	line[5] = keysTotalTime;
+	line[6] = countLines;
+	line[7] = 0;
+	line[8] = 0;
+	line[9] = pred_class;
+	loggerPack.metrics.push(line);
+	console.log(pred_class);
+	
+	//if(loggerPack.metrics.length > 100)
+	//	loggerPack.metrics = [];
+	
+	localStorage['metrics'] = localStorage['metrics'] + ";" + line;
+	localStorage ['log'] = loggerPack;
+		
+	
+
+	//var requestURL = 'p14.json';
+	
+	//var requestURL = 'data//tree.json';
+	
+	//console.log(requestURL);
+	//var request = new XMLHttpRequest();
+	//request.open('GET', requestURL);
+	//request.responseType = 'json';
+	//request.send();
+	//console.log(request);
+	//var tree;
+	//vals = {'Mean Click Duration (sec)': meanClickDuration, 'Mean Degree': meanDegreeModel, 'Mean Stroke Duration (sec)': meanStrokeDuration, 'Task Time (sec)': taskTotalTime, 
+	//'Total Time Typing (sec)': keysTotalTime, 	'Events Number': countLines 
+	//};
+	//var pred_class = "";
+	//console.log(vals['Mean Click Duration (sec)']);
+	//console.log("clicks------" + meanClickDuration);
+	/*request.onload = function() {
 		tree = request.response;
 		//console.log(arq);		
 		val = 30000;
@@ -1175,13 +1448,47 @@ function readJsonTree(){
 		  }
 		}
 		console.log(tree.id, tree.Class)
-	}
+		pred_class = tree.Class;
+		console.log(pred_class);
+		
+		console.log("-----------class "+ pred_class);
+		var line = [];
+		/*line[0] = distNorm;
+		line[1] = velNorm;
+		line[2] = clickNorm;
+		line[3] = pauseNorm;
+		line[4] = eventNorm;
+		line[5] = eccentricityNorm;
+		line[6] = degreeNorm;
+		line[7] = timeNorm;
+		line[8] = anxiety;*/
+		//console.log(timeStampToLog);
+		/*line[0] = timeStampToLog;
+		line[1] = meanClickDuration;
+		line[2] = meanDegreeModel;
+		line[3] = meanStrokeDuration;
+		line[4] = taskTotalTime;
+		line[5] = keysTotalTime;
+		line[6] = countLines;
+		line[7] = 0;
+		line[8] = 0;
+		line[9] = pred_class;
+		loggerPack.metrics.push(line);
+		console.log(pred_class);
+		
+		//if(loggerPack.metrics.length > 100)
+		//	loggerPack.metrics = [];
+		
+		localStorage['metrics'] = localStorage['metrics'] + ";" + line;
+		localStorage ['log'] = loggerPack;
+	}*/
 }
-function teste(){		
+function teste(){	
+		readTreeFile();
 
 		//var requestURL = 'p14.json';
 		
-		var requestURL = 'p01.json';
+		var requestURL = 'data//p5.json';
 		
 		//console.log(requestURL);
 		var request = new XMLHttpRequest();
@@ -1198,7 +1505,14 @@ function teste(){
 			var t2 = 0;
 			var deltaTime = data[1][2];
 			data.forEach(function (line) {
+				countLines++;
 				loggerPack.push(line);
+				if(keysNumber > 0){
+					if(parseInt(line[2]) - lastKey > keyThreshold){
+						keyMetricsHandler();
+						keysNumber = 0;						
+					}
+				}
 				if(line[4] == "pause"){
 					t2 = line[2];
 				}
@@ -1214,28 +1528,102 @@ function teste(){
 				else if(line[3] == "mousedown"){
 					mouseDownHandlerMOdel(line);
 				}
+				else if(line[3] == "mouseup" && mouseDownTime != 0){
+					//console.log("---mousoeup-----")
+					
+					mouseUpHandler(line);
+				}
+				else if(line[3] == "keydown"){
+					if(keysNumber > 0){
+						if(parseInt(line[2]) - lastKey > keyThreshold){
+							keyMetricsHandler();
+							keysNumber = 1;
+							firstKey = lastKey = parseInt(line[2]);
+						}
+						else{
+							lastKey = parseInt(line[2]);
+							keysNumber += 1;
+						}
+					}
+					else {
+						firstKey = lastKey = parseInt(line[2]);
+						keysNumber = 1;							
+					}					
+				}
+				else{
+					current_time = parseFloat(line[2]);
+					
+					if(strokeLength > 0 && parseInt(line[2]) - currMoveModel > pauseThreshold){
+						
+						if(strokeLength == 0){
+							strokeDuration = straightness = 0;
+							console.log("stroke 0 PAUSE: "+current_time + "- " + strokeDuration + " - " + strokeDurationSum/strokes );
+						}
+						else{
+							strokeDuration = parseInt(line[2]) - strokeIniTime;
+							straightness  =  Math.sqrt(Math.pow(x1Stroke - xNStroke, 2) + Math.pow(y1Stroke - yNStroke, 2))/strokeLength;	
+							console.log("stroke 0 PAUSE 1: "+current_time + "- " + strokeDuration + " - " + strokeDurationSum/strokes );								
+						}
+						
+						strokeDurationSum += strokeDuration;
+						strokeLengthSum += strokeLength;
+						straightnessSum += straightness;
+						strokeLength =  strokeIniTime = 0;
+						strokes += 1;
+						meanStrokeDuration = (strokeDurationSum/strokes)/1000;
+						console.log("stroke 0 PAUSE 2: "+current_time + "- " + strokeDuration + " - " + strokeDurationSum/strokes );		
+						//strokeLength =  strokeIniTime = 0
+						
+						
+					}
+						
+				}
+				/*else if(line[3] == "mouseup"){
+					console.log("---mousoeup-----")
+					mouseUpHandler(line);
+				}*/
 				//deltaTime = line[2] - t1;
 				//console.log("delta, t2, difference", deltaTime, line[2], line[2] - deltaTime);
-				if(line[2] - deltaTime > 1000){
-					console.log("delta, t2, difference", deltaTime, line[2], line[2] - deltaTime);
+				if(line[2] - deltaTime > 10000){
+					//console.log("delta, t2, difference", deltaTime, line[2], line[2] - deltaTime);
 					//console.log("Delta time", deltaTime);
 					deltaTime = line[2];
 					t2 = line[2];
 					timeStampToLog = t2;
 					//console.log(timeStampToLog);
 					taskTotalTime = (t2 - t1)/1000;
+					
+					if(strokes > 0){
+						meanStrokeDuration = (strokeDurationSum/strokes)/1000;
+					}
+					if(keysNumber > 0){
+						console.log("keys timeout");
+						keyMetricsHandler();					
+						//keysNumber = 1;
+					} 
 			
-					createGraph(data, (graph)=> {
+					/*createGraph(data, (graph)=> {
 						calcEccentricity(graph, anxietyLevel);
+					});*/
+					createGraph(data, (graph)=> {
+						calcEccentricity(graph, readJsonTree);
 					});
 				}
 			});
 			//console.log("t1, t2", t1, t2);
 			
 			taskTotalTime = (t2 - t1)/1000;
+			
+			
+			if(strokes > 0){
+				meanStrokeDuration = (strokeDurationSum/strokes)/1000;
+			}
+			if(keysNumber > 0){
+				keyMetricsHandler();
+			} 
 		
 			createGraph(data, (graph)=> {
-				calcEccentricity(graph, anxietyLevel);
+				calcEccentricity(graph, readJsonTree);
 				var downlog = browser.extension.getURL('download/downloadLog.html');
 				console.log( downlog );							
 			
@@ -1311,4 +1699,5 @@ function teste(){
 							
 			});
 		}
+		console.log('err');
 }

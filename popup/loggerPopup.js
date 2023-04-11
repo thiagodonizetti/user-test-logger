@@ -33,7 +33,8 @@ function clicksHandler(event){
 	
 	function saveMetrics(metrics){
 		console.log(metrics);
-		metrics.unshift(["Timestamp", "Distance", "Velocity", "Clicks", "Pause", "Events", "Eccentricity", "Degree", "Time", "Anxiety Level" ]);
+		metrics.unshift(["Mean Click Duration", "Mean Degree", "Mean Stroke Duration", "Task Total Time", "Total Time Typing", "Events Number", "-", "-", "-", "Anxiety Level" ]);
+		//metrics.unshift(["Timestamp", "Distance", "Velocity", "Clicks", "Pause", "Events", "Eccentricity", "Degree", "Time", "Anxiety Level" ]);
 		var stringMetrics = JSON.stringify(metrics, null, '\t');
 		
 		console.log(stringMetrics);
