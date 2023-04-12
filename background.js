@@ -403,7 +403,7 @@
 								console.log("stroke 0 PAUSE: "+current_time + "- " + strokeDuration + " - " + strokeDurationSum/strokes );
 							}
 							else{
-								strokeDuration = parseInt(line[2]) - strokeIniTime;
+								strokeDuration = parseInt(m.line[2]) - strokeIniTime;
 								straightness  =  Math.sqrt(Math.pow(x1Stroke - xNStroke, 2) + Math.pow(y1Stroke - yNStroke, 2))/strokeLength;	
 								console.log("stroke 0 PAUSE 1: "+current_time + "- " + strokeDuration + " - " + strokeDurationSum/strokes );								
 							}
@@ -771,7 +771,7 @@
 		//	loggerPack.metrics = [];
 		
 		localStorage['metrics'] = localStorage['metrics'] + ";" + line;
-		localStorage ['log'] = loggerPack;
+		//localStorage ['log'] = loggerPack;
 		//console.log(localStorage['metrics']);
 		
  		
@@ -1326,7 +1326,7 @@ function readTreeFile(){
 }
 function readJsonTree(){	
 
-	vals = {'Mean Click Duration (sec)': meanClickDuration, 'Mean Degree': meanDegreeModel, 'Mean Stroke Duration (sec)': meanStrokeDuration, 'Task Time (sec)': taskTotalTime, 'Total Time Typing (sec)': keysTotalTime, 'Events Number': countLines};
+	vals = {'Mean Click Duration (sec)': meanClickDuration, 'Mean Degree': meanDegreeModel, 'Mean Stroke Duration (sec)': meanStrokeDuration, 'Task Time (sec)': taskTotalTime, 'Total Time Typing (sec)': keysTotalTime/1000, 'Events Number': countLines};
 	var pred_class = "";
 	var node = tree;
 	//console.log(node);
@@ -1380,7 +1380,7 @@ function readJsonTree(){
 	line[2] = meanDegreeModel;
 	line[3] = meanStrokeDuration;
 	line[4] = taskTotalTime;
-	line[5] = keysTotalTime;
+	line[5] = keysTotalTime/1000;
 	line[6] = countLines;
 	line[7] = 0;
 	line[8] = 0;
@@ -1392,7 +1392,7 @@ function readJsonTree(){
 	//	loggerPack.metrics = [];
 	
 	localStorage['metrics'] = localStorage['metrics'] + ";" + line;
-	localStorage ['log'] = loggerPack;
+	//localStorage ['log'] = loggerPack;
 		
 	
 
@@ -1483,12 +1483,270 @@ function readJsonTree(){
 		localStorage ['log'] = loggerPack;
 	}*/
 }
+
+function getClass(line, t1, t2, data){
+	//if(line[2] - deltaTime > 10000){
+	//console.log("delta, t2, difference", deltaTime, line[2], line[2] - deltaTime);
+	//console.log("Delta time", deltaTime);
+	//deltaTime = line[2];
+	t2 = line[2];
+	timeStampToLog = t2;
+	//console.log(timeStampToLog);
+	taskTotalTime = (t2 - t1)/1000;
+	
+	if(strokes > 0){
+		console.log('meanStroke', strokes, strokeDurationSum);
+		meanStrokeDuration = (strokeDurationSum/strokes)/1000;
+	}
+	if(keysNumber > 0){
+		console.log("keys timeout");
+		keysTotalTime += lastKey - firstKey;
+		console.log("keys "  + keysTotalTime);
+		/*keyMetricsHandler();					
+		keysNumber = 1;
+		totalKeysNumber -= 1;
+		firstKey = lastKey;
+		
+		velTotal += velKey
+		firstKey = lastKey = int(data[2].strip('"')) 
+		tempoTotal += time
+		numeroTotalTeclas += numeroTeclas
+		numeroTeclas = 1
+		numeroIntervalos += 1*/
+	} 
+
+	/*createGraph(data, (graph)=> {
+		calcEccentricity(graph, anxietyLevel);
+	});*/
+	createGraph(data, (graph)=> {
+		calcEccentricity(graph, readJsonTree);
+		
+		if(keysNumber > 0){
+			
+			keysTotalTime -= lastKey - firstKey;
+			console.log("keys 2**"  + keysTotalTime);
+		}
+	});
+				
+}
+function asdf(){
+	readTreeFile();
+	//fileList = ['p01.json', 'p5.json', 'p6.json', 'p7.json'];
+	fileList = ['p01.json', 'p5.json'];
+	
+	fileList.forEach(function (file) {
+		var testing = true;
+		var tree = "";
+		var taskIniTime = 0;
+		var taskEndTime = 0;
+		var taskTotalTime = 0;
+
+		
+
+		var clicksModel = 0;
+		var pauseBefModel = 0;
+		var pauseBefSumModel = 0;
+		var pauseBefMeanModel = 0;
+		
+		// New tree model including mean click duration
+		var mouseDownTime = 0;
+		var mouseup = 0;
+		var clickDuration = 0;
+		var updown = 0;
+		var clickDurationSum = 0;
+		var meanClickDuration = 0;
+		
+		var vetModel = [];
+		
+		var timeStampToLog = 0;
+		var distSumModel = 0;
+		var countMovesModel = 0;
+		var distMeanModel = 0;
+		var velMeanModel = 0;
+		var lastMoveModel = 0;
+		var currMoveModel = 0;
+		var moveTimeSumModel = 0;
+		
+		//--- new tree model including stroke
+		var strokeLength = 0;
+		var strokeDuration = 0;
+		var straightness = 0;
+		var pauseThreshold = 1000;
+		var strokeIniTime = 0;
+		var x1Stroke = y1Stroke = xNStroke = yNStroke = 0;
+		var strokeLengthSum = 0;
+		var strokeDurationSum = 0;
+		var straightnessSum = 0;
+		var strokes = 0;
+		var meanStrokeDuration = 0;
+		 
+		
+		var meanDegreeModel = 0;
+		var eventsModel = 0;
+		var eccentricityModel = 0;
+		
+		
+		var	x1=x2=y1=y2= false;
+		
+		var countLines = 0;
+		var deltaTime = 0;
+		
+		//--- new tree model including key typing metrics
+		var backspace = 0;
+		var del = 0;
+		var keyThreshold = 60000;
+		
+		var firstKey = 0;
+		var lastKey = 0;
+		var keysNumber = 0;
+		var totalKeysNumber = 0;
+		var keysTotalTime = 0;
+		var velTotal = 0;
+		var intervalNumber = 0;
+		
+		localStorage["teste"] = "deu certo";
+		var a = localStorage['teste'];
+		//console.log(a);
+		taskIniTime = new Date().getTime();		
+		//console.log(taskIniTime);
+		deltaTime = taskIniTime;
+		
+		teste2("data//"+file);
+		console.log(localStorage['metrics']);
+		localStorage['metrics'] = "";
+	});
+	
+	
+}
+
+//const pattern1 = "https://developer.mozilla.org/*";
+/*const pattern1 = "moz-extension://39492eac-c2f9-4f1e-bac7-849b08e18a1f/download/downloadLog.html";
+const pattern2 = "moz-extension://39492eac-c2f9-4f1e-bac7-849b08e18a1f/download/downloadLog.html";*/
+
+const filter = {
+  url:
+  [
+    {pathContains : "download/downloadLog.html"}/*,
+    {hostPrefix: "developer"}*/
+  ]
+}
+
+
+function downloadCompleteHandler(tabId, changeInfo, tabInfo) {
+	console.log(`Updated tab: ${tabId}`);
+	console.log("Changed attributes: ", changeInfo);
+	console.log("New tab Info: ", tabInfo);
+	
+	testing = true;
+	//tree = "";
+	taskIniTime = 0;
+	taskEndTime = 0;
+	taskTotalTime = 0;
+
+
+
+	clicksModel = 0;
+	pauseBefModel = 0;
+	pauseBefSumModel = 0;
+	pauseBefMeanModel = 0;
+
+	// New tree model including mean click duration
+	mouseDownTime = 0;
+	mouseup = 0;
+	clickDuration = 0;
+	updown = 0;
+	clickDurationSum = 0;
+	meanClickDuration = 0;
+
+	vetModel = [];
+
+	timeStampToLog = 0;
+	distSumModel = 0;
+	countMovesModel = 0;
+	distMeanModel = 0;
+	velMeanModel = 0;
+	lastMoveModel = 0;
+	currMoveModel = 0;
+	moveTimeSumModel = 0;
+
+	//--- new tree model including stroke
+	strokeLength = 0;
+	strokeDuration = 0;
+	straightness = 0;
+	pauseThreshold = 1000;
+	strokeIniTime = 0;
+	x1Stroke = y1Stroke = xNStroke = yNStroke = 0;
+	strokeLengthSum = 0;
+	strokeDurationSum = 0;
+	straightnessSum = 0;
+	strokes = 0;
+	meanStrokeDuration = 0;
+	
+
+	meanDegreeModel = 0;
+	eventsModel = 0;
+	eccentricityModel = 0;
+
+
+	x1=x2=y1=y2= false;
+
+	countLines = 0;
+	deltaTime = 0;
+
+	//--- new tree model including key typing metrics
+	backspace = 0;
+	del = 0;
+	keyThreshold = 60000;
+
+	firstKey = 0;
+	lastKey = 0;
+	keysNumber = 0;
+	totalKeysNumber = 0;
+	keysTotalTime = 0;
+	velTotal = 0;
+	intervalNumber = 0;
+
+	localStorage["teste"] = "deu certo";
+	a = localStorage['teste'];
+	//console.log(a);
+	//taskIniTime = new Date().getTime();		
+	//console.log(taskIniTime);
+	deltaTime = taskIniTime;
+
+	//teste2("data//"+file);
+	console.log(localStorage['metrics']);
+	localStorage['metrics'] = "";
+	loggerPack = [];
+	localStorage['metrics'] = "";
+	loggerPack.metrics = [];
+	
+	
+	fileId += 1;
+	console.log("Teste: ", tabInfo);
+	teste();
+	console.log("Teste2: ", tabInfo);
+}
+
+//browser.tabs.onCompleted.addListener(handleUpdated, filter);
+browser.webNavigation.onCompleted.addListener(downloadCompleteHandler, filter);
+
+
+var fileList = ['p36.json', 'p37.json', 'p38.json', 'p40.json', 'p42.json', 'p43.json'];
+var fileId = 0;
 function teste(){	
-		readTreeFile();
+		if (tree == "")
+			readTreeFile();
 
 		//var requestURL = 'p14.json';
 		
-		var requestURL = 'data//p5.json';
+		//var requestURL = 'data//p26.json';
+		
+		if(fileId >= fileList.length){
+			console.log("return");
+			return;
+		}
+		console.log("fileId", fileList.length, fileId, fileList);
+		var requestURL = "data//"+fileList[fileId];
 		
 		//console.log(requestURL);
 		var request = new XMLHttpRequest();
@@ -1521,6 +1779,9 @@ function teste(){
 				{
 					clicksHandlerModel(line);
 					//clicksModel++;
+				}
+				else if(line[3] == "beforeunload"){
+					getClass(line, t1, t2, data);
 				}
 				else if(line[3] == "mousemove"){
 					moveHandlerModel(line);
@@ -1594,12 +1855,24 @@ function teste(){
 					taskTotalTime = (t2 - t1)/1000;
 					
 					if(strokes > 0){
+						console.log('meanStroke', strokes, strokeDurationSum);
 						meanStrokeDuration = (strokeDurationSum/strokes)/1000;
 					}
 					if(keysNumber > 0){
 						console.log("keys timeout");
-						keyMetricsHandler();					
-						//keysNumber = 1;
+						keysTotalTime += lastKey - firstKey;
+						console.log("keys "  + keysTotalTime);
+						/*keyMetricsHandler();					
+						keysNumber = 1;
+						totalKeysNumber -= 1;
+						firstKey = lastKey;
+						
+						velTotal += velKey
+						firstKey = lastKey = int(data[2].strip('"')) 
+						tempoTotal += time
+						numeroTotalTeclas += numeroTeclas
+						numeroTeclas = 1
+						numeroIntervalos += 1*/
 					} 
 			
 					/*createGraph(data, (graph)=> {
@@ -1607,7 +1880,14 @@ function teste(){
 					});*/
 					createGraph(data, (graph)=> {
 						calcEccentricity(graph, readJsonTree);
+						
+						if(keysNumber > 0){
+							
+							keysTotalTime -= lastKey - firstKey;
+							console.log("keys 2**"  + keysTotalTime);
+						}
 					});
+					
 				}
 			});
 			//console.log("t1, t2", t1, t2);
@@ -1624,6 +1904,8 @@ function teste(){
 		
 			createGraph(data, (graph)=> {
 				calcEccentricity(graph, readJsonTree);
+				console.log("Final Time", taskTotalTime);
+				
 				var downlog = browser.extension.getURL('download/downloadLog.html');
 				console.log( downlog );							
 			
@@ -1699,5 +1981,4 @@ function teste(){
 							
 			});
 		}
-		console.log('err');
 }

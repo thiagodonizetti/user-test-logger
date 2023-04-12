@@ -30,7 +30,7 @@ function init(backPage){
 	console.log(backPage);
 	Promise.all([saveMetrics(backPage.loggerPack.metrics)]).then(function(){
 		console.log("promise");
-		myPort.postMessage({done: 1});
+		myPort.postMessage({done: 2});
 	});
 	
 	//Saving dot file
