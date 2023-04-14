@@ -1,5 +1,8 @@
-	var testing = true;
+	var testing = false;
 	var tree = "";
+	if (tree == "")
+		readTreeFile();
+	
 	var taskIniTime = 0;
 	var taskEndTime = 0;
 	var taskTotalTime = 0;
@@ -40,14 +43,18 @@
 	var strokeLengthSum = 0;
 	var strokeDurationSum = 0;
 	var straightnessSum = 0;
+	var meanStraightness = 0;
 	var strokes = 0;
 	var meanStrokeDuration = 0;
+	var meanStrokeLength
 	 
 	
 	var meanDegreeModel = 0;
 	var eventsModel = 0;
 	var eccentricityModel = 0;
-	
+	var incidentesNumberModel = 0;
+	var nodesNumberModel = 0;
+	var linksNumberModel = 0;
 	
 	var	x1=x2=y1=y2= false;
 	
@@ -65,6 +72,7 @@
 	var totalKeysNumber = 0;
 	var keysTotalTime = 0;
 	var velTotal = 0;
+	var meanTimeTyping = 0;
 	var intervalNumber = 0;
 	//------------
 	
@@ -85,6 +93,33 @@
 		//calc taskTotalTime (end - ini)/1000
 		taskTotalTime = (taskEndTime - taskIniTime)/1000;	// div 1000 to miliseconds	
 		
+		if(strokes > 0){
+			//-console.log('meanStroke', strokes, strokeDurationSum);
+			meanStrokeDuration = (strokeDurationSum/strokes)/1000;
+			meanStraightness = straightnessSum/strokes;
+		}
+		
+		
+		if(keysNumber > 0){
+			//-console.log("keys timeout");
+			keysTotalTime += lastKey - firstKey;
+			if(intervalNumber > 0)
+				meanTimeTyping = (keysTotalTime/intervalNumber)/1000;
+			//-console.log("keys "  + keysTotalTime);
+			/*keyMetricsHandler();					
+			keysNumber = 1;
+			totalKeysNumber -= 1;
+			firstKey = lastKey;
+			
+			velTotal += velKey
+			firstKey = lastKey = int(data[2].strip('"')) 
+			tempoTotal += time
+			numeroTotalTeclas += numeroTeclas
+			numeroTeclas = 1
+			numeroIntervalos += 1*/
+		} 
+		
+		//console.log("writeline metrics handler");
 		if(loggerPack.length > 0)
 			writeLine(loggerPack);
 	}
@@ -105,7 +140,7 @@
 			
 			//calc taskTotalTime (end - ini)/1000
 			taskTotalTime = (taskEndTime - taskIniTime)/1000;	// div 1000 to miliseconds	
-			
+			console.log("*************** metricsTimeOut");
 			if(loggerPack.length > 0)
 				writeLine(loggerPack);
 			
@@ -131,10 +166,24 @@
 	
 	//// --- alarm end
 	
-	function writeLine(data){
+	// CHANGEd anxietylevel function to ReadJson
+	/*function writeLine(data){
 		createGraph(data, (graph)=> {
 			calcEccentricity(graph, anxietyLevel);
 		});		
+	}*/
+	
+	function writeLine(data){
+		
+		createGraph(data, (graph)=> {
+			calcEccentricity(graph, readJsonTree);
+			
+			if(keysNumber > 0){			
+				keysTotalTime -= lastKey - firstKey;
+				//console.log("keys 2**"  + keysTotalTime);
+			}
+		});		
+	
 	}
 			
 	function euclideanDistance(x1, y1, x2, y2){
@@ -161,6 +210,7 @@
 		keysTotalTime += time;
 		totalKeysNumber += keysNumber;
 		intervalNumber += 1;
+		meanTimeTyping = (keysTotalTime/intervalNumber)/1000;
 		
 	}
 	//--- new tree model including key typing metrics
@@ -206,6 +256,8 @@
 		clicksModel++;		
 		//console.log(line);
 	}
+	
+	
 	function mouseUpHandler(line){
 		mouseup = parseFloat(line[2]);
 		clickDuration = mouseup - mouseDownTime;
@@ -278,10 +330,7 @@
 	}
 	
 	
-	
-	
-	
-	
+		
 	
 	var reportsOpen = 0;
 	var webPagesIds = 0;
@@ -356,6 +405,10 @@
 						clicksHandlerModel(m.line);
 						//clicksModel++;
 					}
+					else if(m.line[3] == "beforeunload"){
+						//TODO
+						metricsTimeHandler(m.line);
+					}
 					else if(m.line[3] == "mousemove"){
 						moveHandlerModel(m.line);
 					}
@@ -363,6 +416,7 @@
 						mouseDownHandlerMOdel(m.line);
 					}
 					else if(m.line[3] == "metrics"){
+						//TODO
 						metricsTimeHandler(m.line);
 					}
 					//New Tree: Including mean click duration
@@ -370,10 +424,10 @@
 						//console.log("---mousoeup-----")
 						mouseUpHandler(m.line);
 					}
-					else if(m.line[3] == "mouseup"){
+					/*else if(m.line[3] == "mouseup"){
 						//console.log("---mousoeup-----")
 						mouseUpHandler(m.line);
-					}
+					}*/
 					else if(m.line[3] == "keydown"){
 						if(keysNumber > 0){
 							if(parseInt(m.line[2]) - lastKey > keyThreshold){
@@ -414,6 +468,7 @@
 							strokeLength =  strokeIniTime = 0;
 							strokes += 1;
 							meanStrokeDuration = (strokeDurationSum/strokes) / 1000;
+							meanStrokeLength = (strokeLengthSum/strokes);
 							console.log("stroke 0 PAUSE 2: "+current_time + "- " + strokeDuration + " - " + strokeDurationSum/strokes );		
 							//strokeLength =  strokeIniTime = 0
 							
@@ -453,7 +508,15 @@
 			});
 		}
 	}
-	
+	/* Todo:
+		- ReadTree file
+		- Initialize vars
+		- At Metrics, calc metrics and check class using tree
+		- at Pause, calc metircs and check class using tree
+		- Log lines
+		- Check new metrics
+		- change line 1 metrics to read Json
+		*/
 	function callRecordCS(){
 		
 		localStorage["teste"] = "deu certo";
@@ -490,10 +553,18 @@
 		console.log(taskEndTime);
 		console.log(distSumModel);
 		console.log(countMovesModel);
+		
+		if(strokes > 0){
+			meanStrokeDuration = (strokeDurationSum/strokes)/1000;
+			meanStraightness = straightnessSum/strokes;
+			meanStrokeLength = (strokeLengthSum/strokes);
+		}
+		
 		//loggerPack.teste = "Teste logger";
 		if(keysNumber > 0){
 			keyMetricsHandler();
 		} 
+		
 		
 		
 		//console.log(loggerPack);
@@ -1238,13 +1309,16 @@ function createGraph(loggerPack, callback){
 	console.log(degreesI, degreesO, graph.nodes.length, degreesI/graph.nodes.length, degreesO/graph.nodes.length);*/
 	
 	meanDegreeModel = graph.links.length/graph.nodes.length;
+	nodesNumberModel = graph.nodes.length;
+	linksNumberModel = graph.links.length;
 	
 	//console.log(graph);
 	//console.log("grau medio ", graph.links.length/graph.nodes.length);
 	return callback(graph);	
 }
 
-function sam(graph){	
+function sam(graph){
+	incidentesNumberModel = 0;
 	for(let node of graph.nodes){		
 		var meanNeighbours = neighbourhoodMean(node);
 		var devNeighbours = neighbourhoodDev(node, meanNeighbours);
@@ -1252,6 +1326,7 @@ function sam(graph){
 		node.meanNeighbours = meanNeighbours;
 		if( node.meanDistance > (meanNeighbours + 2*devNeighbours) ){
 			node.sam = 'incident';
+			incidentesNumberModel++;
 		}
 		else if( node.meanDistance < (meanNeighbours - 2*devNeighbours) ){
 			node.sam = 'shortcut';
@@ -1260,6 +1335,7 @@ function sam(graph){
 			node.sam = 'regular';
 		}		
 	}
+	console.log("incidentes ", incidentesNumberModel);
 }
 
 //formatting timestamp -> human readable
@@ -1326,7 +1402,29 @@ function readTreeFile(){
 }
 function readJsonTree(){	
 
-	vals = {'Mean Click Duration (sec)': meanClickDuration, 'Mean Degree': meanDegreeModel, 'Mean Stroke Duration (sec)': meanStrokeDuration, 'Task Time (sec)': taskTotalTime, 'Total Time Typing (sec)': keysTotalTime/1000, 'Events Number': countLines};
+	vals = {
+		'Backspace': backspace, 
+		'Clicks Number': clicksModel, 
+		'Eccentricity': eccentricityModel, 
+		'Events Number': countLines, 
+		'Incidents Number': incidentesNumberModel, 
+		'Keys': totalKeysNumber, 
+		'Links Number': linksNumberModel, 
+		'Mean Click Duration (sec)': meanClickDuration, 
+		'Mean Degree': meanDegreeModel, 
+		'Mean Pause Before Click (sec)': pauseBefMeanModel, 
+		'Mean Straightness': meanStraightness, 
+		'Mean Stroke Duration (sec)': meanStrokeDuration,
+		'Mean Stroke Length (px)': meanStrokeLength,
+		'Mean Time Typing (sec)': meanTimeTyping,
+		'Mouse Mean Distance (px)': distMeanModel,
+		'Mouse Mean Velocity (px/sec)': velMeanModel,
+		'Mouse Total Distance (px)': distSumModel,
+		'Nodes Number': nodesNumberModel,
+		'Task Time (sec)': taskTotalTime, 
+		'Total Time Typing (sec)': keysTotalTime/1000, 
+		'Typing Velocity (key/min)': velTotal
+	};
 	var pred_class = "";
 	var node = tree;
 	//console.log(node);
@@ -1529,7 +1627,7 @@ function getClass(line, t1, t2, data){
 	});
 				
 }
-function asdf(){
+function old_test_method(){
 	readTreeFile();
 	//fileList = ['p01.json', 'p5.json', 'p6.json', 'p7.json'];
 	fileList = ['p01.json', 'p5.json'];
@@ -1731,11 +1829,11 @@ function downloadCompleteHandler(tabId, changeInfo, tabInfo) {
 browser.webNavigation.onCompleted.addListener(downloadCompleteHandler, filter);
 
 
-var fileList = ['p36.json', 'p37.json', 'p38.json', 'p40.json', 'p42.json', 'p43.json'];
+var fileList = ['p6.2-log.json', 'p4.2-log.json', 'p9.2-log.json', 'p17.2-log.json', 'p10.2-log.json', 'p14.2-log.json', 'p18.2-log.json', 'p15.2-log.json'];
 var fileId = 0;
 function teste(){	
-		if (tree == "")
-			readTreeFile();
+		/*if (tree == "")
+			readTreeFile();*/
 
 		//var requestURL = 'p14.json';
 		
