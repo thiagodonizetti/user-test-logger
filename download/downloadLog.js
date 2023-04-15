@@ -2,7 +2,7 @@ function saveMetrics(metrics){
 	return new Promise(function(resolve, reject) {
 		console.log(metrics);
 		//metrics.unshift(["Timestamp","Distance", "Velocity", "Clicks", "Pause", "Events", "Eccentricity", "Degree", "Time" ]);
-		metrics.unshift(["Timestamp","Mean Click Duration", "Mean Degree", "Mean Stroke Duration", "Task Total Time", "Total Time Typing", "Events Number", "-", "-" ]);
+		//metrics.unshift(["Timestamp","Mean Click Duration", "Mean Degree", "Mean Stroke Duration", "Task Total Time", "Total Time Typing", "Events Number", "-", "-" ]);
 		var stringMetrics = JSON.stringify(metrics, null, '\t');
 		
 		console.log(stringMetrics);
