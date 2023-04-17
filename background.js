@@ -1,4 +1,5 @@
-	var testing = false;
+	var testing = true;
+	var normTime = true;
 	var tree = "";
 	if (tree == "")
 		readTreeFile();
@@ -1386,7 +1387,7 @@ function Queue(){var a=[],b=0;this.getLength=function(){return a.length-b};this.
 
 function readTreeFile(){
 	
-	var requestURL = 'data//tree.json';
+	var requestURL = 'data//tree-normTime.json';
 	
 	//console.log(requestURL);
 	var request = new XMLHttpRequest();
@@ -1405,12 +1406,12 @@ function readTreeFile(){
 		console.log(tree);
 		var node = tree;
 		readTreeRecursive(node);
-		console.log(tree_rules);
+		//--console.log(tree_rules);
 		rules_set = new Set(tree_rules);
 		tree_rules = Array.from(rules_set);
-		console.log(tree_rules);
+		//--console.log(tree_rules);
 		tree_rules.unshift('Timestamp');
-		loggerPack.metrics.push(tree_rules)
+		loggerPack.metrics.push(tree_rules);
 		console.log(tree_rules);
 		//console.log(node);
 		//console.log(tree);
@@ -1427,7 +1428,7 @@ function readTreeRecursive(node){
 	  rule = rule + r[i] + " "
 	}
 	rule = rule.trim();
-	console.log(rule);
+	//console.log(rule);
 	tree_rules.push(rule);
 	
 	
@@ -1462,6 +1463,20 @@ function readJsonTree(){
 		'Typing Velocity (key/min)': velTotal,
 		'Timestamp': timeStampToLog
 	};
+	if(normTime == true)
+	{
+		vals['Events Number'] = vals['Events Number']/taskTotalTime;
+		vals['Nodes Number'] = vals['Nodes Number']/taskTotalTime;
+		vals['Eccentricity'] = vals['Eccentricity']/taskTotalTime;
+		vals['Incidents Number'] = vals['Incidents Number']/taskTotalTime;
+		vals['Links Number'] = vals['Links Number']/taskTotalTime;		
+		vals['Mean Degree'] = vals['Mean Degree']/taskTotalTime;
+		vals['Clicks Number'] = vals['Clicks Number']/taskTotalTime;
+		vals['Keys'] = vals['Keys']/taskTotalTime;
+		vals['Total Time Typing (sec)'] = vals['Total Time Typing (sec)']/taskTotalTime;
+		vals['Backspace)'] = vals['Backspace']/taskTotalTime;
+	}
+	
 	var pred_class = "";
 	var node = tree;
 	//console.log(node);
@@ -1494,15 +1509,16 @@ function readJsonTree(){
 		console.log('igual')
 	  }
 	}
-	console.log(node.id, node.Class)
+	//console.log(node.id, node.Class)
 	pred_class = node.Class;
-	console.log(pred_class);
+	//console.log(pred_class);
 	
 	console.log("-----------class "+ pred_class);
 	var line = [];
 	//line.push(timeStampToLog);
 	tree_rules.forEach(function(rule){
-		line.push(parseFloat(vals[rule].toFixed(3)));
+		//console.log(vals[rule]);
+		line.push(parseFloat(vals[rule]).toFixed(3));
 	});
 	line.push(pred_class);
 	
@@ -1527,7 +1543,7 @@ function readJsonTree(){
 	line[8] = 0;
 	line[9] = pred_class;*/
 	loggerPack.metrics.push(line);
-	console.log(pred_class);
+	//console.log(pred_class);
 	
 	//if(loggerPack.metrics.length > 100)
 	//	loggerPack.metrics = [];
@@ -1679,10 +1695,10 @@ function getClass(line, t1, t2, data){
 
 function old_test_method(){
 	readTreeFile();
-	//fileList = ['p01.json', 'p5.json', 'p6.json', 'p7.json'];
-	fileList = ['p01.json', 'p5.json'];
+	//arquis = ['p01.json', 'p5.json', 'p6.json', 'p7.json'];
+	arquis = ['p01.json', 'p5.json'];
 	
-	fileList.forEach(function (file) {
+	arquis.forEach(function (file) {
 		var testing = true;
 		var tree = "";
 		var taskIniTime = 0;
@@ -1759,8 +1775,8 @@ function old_test_method(){
 		//console.log(taskIniTime);
 		deltaTime = taskIniTime;
 		
-		teste2("data//"+file);
-		console.log(localStorage['metrics']);
+		//teste2("data//b1//"+file);
+		//console.log(localStorage['metrics']);
 		localStorage['metrics'] = "";
 	});
 	
@@ -1871,6 +1887,7 @@ function downloadCompleteHandler(tabId, changeInfo, tabInfo) {
 	loggerPack = [];
 	localStorage['metrics'] = "";
 	loggerPack.metrics = [];
+	loggerPack.metrics.push(tree_rules);
 	
 	
 	fileId += 1;
@@ -1883,7 +1900,9 @@ function downloadCompleteHandler(tabId, changeInfo, tabInfo) {
 browser.webNavigation.onCompleted.addListener(downloadCompleteHandler, filter);
 
 
-var fileList = ['p6.2-log.json', 'p4.2-log.json', 'p9.2-log.json', 'p17.2-log.json', 'p10.2-log.json', 'p14.2-log.json', 'p18.2-log.json', 'p15.2-log.json'];
+var fileList = ['p6.2-log.json', 'p7.2-log.json', 'p8.2-log.json', 'p9.2-log.json', 'p10.2-log.json', 'p11.2-log.json', 'p12.2-log.json', 'p13.2-log.json'];
+//var fileList = ["p27.json", "p28.json", "p29.json", "p31.json", "p32.json", "p33.json", "p34.json", "p35.json", "p36.json", "p37.json", "p38.json", "p40.json", "p42.json", "p43.json"];
+
 var fileId = 0;
 
 function teste(){	
@@ -1899,7 +1918,7 @@ function teste(){
 			return;
 		}
 		console.log("fileId", fileList.length, fileId, fileList);
-		var requestURL = "data//"+fileList[fileId];
+		var requestURL = "data//B2//"+fileList[fileId];
 		
 		//console.log(requestURL);
 		var request = new XMLHttpRequest();
