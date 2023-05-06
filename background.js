@@ -1,5 +1,96 @@
-	var testing = true;
-	var normTime = true;
+browser.contextMenus.create({
+  id: "eat-page",
+  title: "Eat this page"
+});
+browser.contextMenus.create({
+  id: "carousel",
+  title: "Carousel"
+});
+
+
+function getActiveTab() {
+  return browser.tabs.query({active: true, currentWindow: true});
+}
+
+function requestModifications(type){
+	getActiveTab().then((tabs) => {
+		console.log(tabs);
+		if(type == 'carousel'){
+			console.log('carousel');
+			browser.tabs.sendMessage(tabs[0].id, {
+				carousel: "remove"
+			});			
+		}
+		else if(type == 'unity'){
+			browser.tabs.sendMessage(tabs[0].id, {
+				unity: "enable"
+			});
+		}
+		else if(type == 'program'){
+			browser.tabs.sendMessage(tabs[0].id, {
+				program: "enable"
+			});
+		}
+		else if(type == 'search'){
+			browser.tabs.sendMessage(tabs[0].id, {
+				search: "enable"
+			});
+		}
+
+  }); 	
+}
+
+function openSeach(){
+	requestModifications('search');
+}
+function openProgramFilter(){
+	requestModifications('program');
+}
+function mouseOverUnity(){
+	requestModifications('unity');
+}
+function carousel(){
+	/*let executing = browser.tabs.executeScript({
+      file: "simplify.js"
+    });
+    executing.then(requestModifications('carousel'));*/
+	requestModifications('carousel');
+}
+
+
+function messageTabTest(tabs) {
+  browser.tabs.sendMessage(tabs[0].id, {
+    replacement: "Message from the extension!"
+  });
+  browser.tabs.sendMessage(tabs[0].id, {
+    type: 1
+  });
+}
+
+function onExecuted(result) {
+    let querying = browser.tabs.query({
+        active: true,
+        currentWindow: true
+    });
+    querying.then(messageTabTest);
+}
+
+
+browser.contextMenus.onClicked.addListener((info, tab) => {
+  if (info.menuItemId === "eat-page") {
+    let executing = browser.tabs.executeScript({
+      file: "simplify.js"
+    });
+    executing.then(onExecuted);
+  }
+  if (info.menuItemId === "carousel") {
+	  carousel();
+  }
+});
+
+	var testing = false;
+	var normTime = false;
+	var jump = true;
 	var tree = "";
 	if (tree == "")
 		readTreeFile();
@@ -16,6 +107,8 @@
 	var pauseBefModel = 0;
 	var pauseBefSumModel = 0;
 	var pauseBefMeanModel = 0;
+	
+	var dblclicks = 0;
 	
 	// New tree model including mean click duration
 	var mouseDownTime = 0;
@@ -50,7 +143,6 @@
 	var strokes = 0;
 	var meanStrokeDuration = 0;
 	var meanStrokeLength = 0;
-	 
 	
 	var meanDegreeModel = 0;
 	var eventsModel = 0;
@@ -81,7 +173,8 @@
 	
 	// --- alarm timeout
 	
-	
+	// simplification vars:
+	backHome = 0;
 	
 	
 	
@@ -427,6 +520,32 @@
 					else if(m.line[3] == "mouseup" && mouseDownTime != 0){
 						//console.log("---mousoeup-----")
 						mouseUpHandler(m.line);
+					}
+					//simplification home:
+					else if(m.line[3] == "pageview"){
+						//url = m.line[7].split("|")
+						if(m.line[7].split("|")[0] == "https://www.sescsp.org.br/"){
+							if(backHome == 1){
+								backHome = backHome + 1;
+								carousel();
+								mouseOverUnity();
+							}
+							else if(backHome == 2){
+								carousel();
+								mouseOverUnity();
+								openProgramFilter();
+								backHome = backHome + 1;								
+							}
+							else if(backHome > 2){
+								carousel();
+								mouseOverUnity();
+								openSeach();
+								backHome = backHome + 1;								
+							}							
+						}
+						else if( backHome == 0 ){
+							backHome = backHome + 1;
+						}
 					}
 					/*else if(m.line[3] == "mouseup"){
 						//console.log("---mousoeup-----")
@@ -1056,6 +1175,8 @@ function calcMean (oldMean, value, n){
 
 var distances;
 function calcEccentricity(graph, callback){
+	if(jump)
+		return callback(0);;
 	//var eccentricities = [];
 	freq1=[];
 	//var start = graph.nodes[0];
@@ -1323,7 +1444,10 @@ function createGraph(loggerPack, callback){
 }
 
 function sam(graph){
+	
 	incidentesNumberModel = 0;
+	if(jump)
+		return;
 	for(let node of graph.nodes){		
 		var meanNeighbours = neighbourhoodMean(node);
 		var devNeighbours = neighbourhoodDev(node, meanNeighbours);
@@ -1387,7 +1511,7 @@ function Queue(){var a=[],b=0;this.getLength=function(){return a.length-b};this.
 
 function readTreeFile(){
 	
-	var requestURL = 'data//tree-normTime.json';
+	var requestURL = 'data//tree-resboth.json';
 	
 	//console.log(requestURL);
 	var request = new XMLHttpRequest();
@@ -1461,7 +1585,8 @@ function readJsonTree(){
 		'Task Time (sec)': taskTotalTime, 
 		'Total Time Typing (sec)': keysTotalTime/1000, 
 		'Typing Velocity (key/min)': velTotal,
-		'Timestamp': timeStampToLog
+		'Timestamp': timeStampToLog,
+		'DB-Clicks Number': dblclicks
 	};
 	if(normTime == true)
 	{
@@ -1475,6 +1600,7 @@ function readJsonTree(){
 		vals['Keys'] = vals['Keys']/taskTotalTime;
 		vals['Total Time Typing (sec)'] = vals['Total Time Typing (sec)']/taskTotalTime;
 		vals['Backspace)'] = vals['Backspace']/taskTotalTime;
+		vals['DB-Clicks Number)'] = vals['DB-Clicks Number']/taskTotalTime;
 	}
 	
 	var pred_class = "";
@@ -1813,6 +1939,8 @@ function downloadCompleteHandler(tabId, changeInfo, tabInfo) {
 	pauseBefModel = 0;
 	pauseBefSumModel = 0;
 	pauseBefMeanModel = 0;
+	
+	dblclicks = 0;
 
 	// New tree model including mean click duration
 	mouseDownTime = 0;
@@ -1900,7 +2028,9 @@ function downloadCompleteHandler(tabId, changeInfo, tabInfo) {
 browser.webNavigation.onCompleted.addListener(downloadCompleteHandler, filter);
 
 
-var fileList = ['p6.2-log.json', 'p7.2-log.json', 'p8.2-log.json', 'p9.2-log.json', 'p10.2-log.json', 'p11.2-log.json', 'p12.2-log.json', 'p13.2-log.json'];
+var fileList = ["p1.2-log.json"];
+
+//["p6.json", "p7.json", "p11.json", "p12.json", "p14.json", "p17.json", "p18.json", "p19.json", "p20.json", "p21.json", "p22.json", "p23.json", "p24.json", "p25.json", "p26.json", "p27.json", "p28.json", "p29.json", "p31.json", "p32.json", "p33.json", "p34.json", "p35.json", "p36.json", "p37.json", "p38.json", "p40.json", "p42.json", "p43.json"];
 //var fileList = ["p27.json", "p28.json", "p29.json", "p31.json", "p32.json", "p33.json", "p34.json", "p35.json", "p36.json", "p37.json", "p38.json", "p40.json", "p42.json", "p43.json"];
 
 var fileId = 0;
@@ -1952,6 +2082,9 @@ function teste(){
 					clicksHandlerModel(line);
 					//clicksModel++;
 				}
+				else if(line[3] == "dblclick"){
+					dblclicks++;
+				}				
 				else if(line[3] == "beforeunload"){
 					getClass(line, t1, t2, data);
 				}

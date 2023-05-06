@@ -147,6 +147,7 @@ var methods = {
 			seen = 1;
 			$(window).trigger('pageview');
 			console.log("pageview");
+			console.log(document.getElementsByClassName("home--destaques")[0]);
 			console.log(event.target.id);
 			if(!timeStart){
 				console.log(timeStart);
