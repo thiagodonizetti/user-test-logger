@@ -1,3 +1,5 @@
+var highCA = true;
+
 browser.contextMenus.create({
   id: "eat-page",
   title: "Eat this page"
@@ -13,12 +15,14 @@ function getActiveTab() {
 }
 
 function requestModifications(type){
+	if(!highCA)
+		return;
 	getActiveTab().then((tabs) => {
 		console.log(tabs);
-		if(type == 'carousel'){
+		if(type == 'carousel-home' || type == 'carousel-unidades' ||  type == 'carousel-other'){
 			console.log('carousel');
 			browser.tabs.sendMessage(tabs[0].id, {
-				carousel: "remove"
+				carousel: type
 			});			
 		}
 		else if(type == 'unity'){
@@ -36,8 +40,24 @@ function requestModifications(type){
 				search: "enable"
 			});
 		}
+		else if(type == 'menulinks'){
+			console.log('other');
+			browser.tabs.sendMessage(tabs[0].id, {
+				menulinks: "change"
+			});
+		}
 
   }); 	
+}
+
+function otherPages(){
+	requestModifications('menulinks');
+	requestModifications('fixmenu');
+	requestModifications('carousel-other')
+}
+
+function programacao(){
+	
 }
 
 function openSeach(){
@@ -49,12 +69,12 @@ function openProgramFilter(){
 function mouseOverUnity(){
 	requestModifications('unity');
 }
-function carousel(){
+function carousel(type){
 	/*let executing = browser.tabs.executeScript({
       file: "simplify.js"
     });
     executing.then(requestModifications('carousel'));*/
-	requestModifications('carousel');
+	requestModifications('carousel-'+type);
 }
 
 
@@ -527,24 +547,40 @@ browser.contextMenus.onClicked.addListener((info, tab) => {
 						if(m.line[7].split("|")[0] == "https://www.sescsp.org.br/"){
 							if(backHome == 1){
 								backHome = backHome + 1;
-								carousel();
+								carousel('home');
 								mouseOverUnity();
 							}
 							else if(backHome == 2){
-								carousel();
+								carousel('home');
 								mouseOverUnity();
 								openProgramFilter();
 								backHome = backHome + 1;								
 							}
 							else if(backHome > 2){
-								carousel();
+								carousel('home');
 								mouseOverUnity();
 								openSeach();
-								backHome = backHome + 1;								
+								backHome = backHome + 1;	
+								console.log('back 3');						
 							}							
 						}
-						else if( backHome == 0 ){
-							backHome = backHome + 1;
+						else if(m.line[7].includes('/unidades/')){
+							carousel('unidades');
+							if( backHome == 0 ){
+								backHome = backHome + 1;
+							}
+						}
+						else if(m.line[7].includes('programacao')){
+							programacao();
+						}
+							
+						else {
+							if( backHome == 0 ){
+								backHome = backHome + 1;
+							}
+							
+							otherPages();
+							console.log('other');
 						}
 					}
 					/*else if(m.line[3] == "mouseup"){
