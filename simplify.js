@@ -24,14 +24,58 @@ function simplifyPageReceiver(request, sender, sendResponse) {
 }
 browser.runtime.onMessage.addListener(simplifyPageReceiver);
 
+
+homeCSS = `
+	.fNCgwt {
+		max-height: 433px;
+	}
+	.eBaTE {
+		max-height: 455px;
+	}
+	.dnsJqu {
+	min-height: 510px;
+	}
+	.OxmbX {
+		margin-left: 5px;
+	}
+	.search-button{
+		width: 46px;
+		height: 46px;
+		border: 0.2em solid white;
+	}
+	.search-button img{
+		width: 28px;
+		height: 23px;		
+	}
+	.btn-pesquisar.active{
+		font-size: 18px !important;
+		font-weight: bolder !important;
+		padding: 2px 31px !important;
+	}
+		`;
+		
 function menuLinks(){
 	
 	var styles=[];
-	styles.push(".nav-wrapper span, a{text-decoration: underline !important;text-decoration-color: white !important;font-weight: 800;}");
+	styles.push(".nav-wrapper span, a{text-decoration: underline !important; text-decoration-color: white !important; font-weight: 800; font-size: 1.1rem;}");
 
-	styles.push("h6{text-decoration: underline!important;text-decoration-color: #3477c8 !important;font-weight: 800;} ");
+	styles.push("h6{text-decoration: underline!important; text-decoration-color: #3477c8 !important; font-weight: 800; font-size: 1.1rem;} ");
 
-	styles.push("#dropdownMenuButton {text-decoration: underline !important;text-decoration-color: white !important;font-weight: 800;}");
+	styles.push("#dropdownMenuButton {text-decoration: underline !important; text-decoration-color: white !important; font-weight: 800; font-size: 1.1rem; width: 285px;}");
+	/*
+		.fNCgwt {
+			max-height: 433px;
+		}
+		.eBaTE {
+			max-height: 455px;
+		}
+		.dnsJqu {
+		min-height: 510px;
+		}
+		.OxmbX {
+			margin-left: 5px;
+		}
+	*/
 
 	for(s in styles){
 		console.log(document.styleSheets);
@@ -40,7 +84,33 @@ function menuLinks(){
 	}
 	//document.styleSheets[0].insertRule("nav.nav-wrapper span, a{text-decoration: underline;} ", 0);
 	//document.styleSheets[0].insertRule(styles, 0);
+	appendStyleSheet('homeCSS', homeCSS);
 }
+
+
+
+function appendStyleSheet(id, content) {
+    if (!document.querySelector("#" + id)) {
+        var head = document.head || document.getElementsByTagName("head")[0];
+        console.log(head);
+        head.appendChild(createStyleElement(id, content));
+    }
+}
+
+// Creates the style element
+function createStyleElement(id, content) {
+    var style = document.createElement("style");
+    style.type = "text/css";
+    style.id = id;
+
+    if (style.styleSheet) {
+        style.styleSheet.cssText = content;
+    } else {
+        style.appendChild(document.createTextNode(content));
+    }
+    return style;
+}
+
 function pageBorder(){
 	document.body.style.border = "5px solid red";
 }
