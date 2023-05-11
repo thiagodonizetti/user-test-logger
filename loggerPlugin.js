@@ -3,6 +3,8 @@ var ownId = 0;
 var seen = 0;
 timeStart = 0;
 
+var lastScrollTop = 0;
+
 var settings = {
 	"interval" : 500,
 	"packSize" : 1000,
@@ -84,6 +86,7 @@ var methods = {
 		switch (event.type) {
 			case "pageview": //DOUBT
 				//extra = location.href + "|" + $(window).width() + "x" + $(window).height(); //DOUBT $ DOUBT
+				lastScrollTop = window.pageYOffset || document.documentElement.scrollTop;
 				extra = location.href + "|" + $(document).width() + "x" + $(document).height();
 				extra.replace(settings.columnMarker, settings.escapeMarker + settings.columnMarker, "g").replace(settings.lineMarker, settings.escapeMarker + settings.lineMarker, "g");
 				break;
@@ -107,6 +110,7 @@ var methods = {
 				console.log('scroll');
 				var place = $(event.target);
 				extra = place.scrollLeft().toFixed(0) + 'x' + place.scrollTop().toFixed(0);
+				getScrollDirections();
 				break;
 			case "click":
 			case "dblclick":
@@ -147,8 +151,9 @@ var methods = {
 			seen = 1;
 			$(window).trigger('pageview');
 			console.log("pageview");
-			console.log(document.getElementsByClassName("home--destaques")[0]);
-			console.log(event.target.id);
+			lastScrollTop = window.pageYOffset || document.documentElement.scrollTop;
+			//console.log(document.getElementsByClassName("home--destaques")[0]);
+			//console.log(event.target.id);
 			if(!timeStart){
 				console.log(timeStart);
 				metricsTimeOut.setup();
@@ -175,6 +180,39 @@ var methods = {
 	
 }
 
+function getScrollDirections(){
+	//console.log('getScrollDirections');
+	//console.log( window.pageYOffset );
+	//console.log(  document.documentElement.scrollTop );
+	//console.log(  lastScrollTop );
+	
+	var st = window.pageYOffset || document.documentElement.scrollTop; // Credits: "https://github.com/qeremy/so/blob/master/so.dom.js#L426"
+	if (st > lastScrollTop) {
+		// downscroll code
+		console.log("down scroll");
+	} else if (st < lastScrollTop) {
+		// upscroll code
+		console.log('up scroll');
+	} 
+	else{
+		console.log(lastScrollTop, st);
+	}// else was horizontal scroll
+	lastScrollTop = st <= 0 ? 0 : st; // For Mobile or negative scrolling
+
+	// element should be replaced with the actual target element on which you have applied scroll, use window in case of no target element.
+	/*window.addEventListener("scroll", function(){ // or window.addEventListener("scroll"....
+	   var st = window.pageYOffset || document.documentElement.scrollTop; // Credits: "https://github.com/qeremy/so/blob/master/so.dom.js#L426"
+	   if (st > lastScrollTop) {
+		  // downscroll code
+		  console.log("down scroll");
+	   } else if (st < lastScrollTop) {
+		  // upscroll code
+		  console.log('up scroll');
+	   } // else was horizontal scroll
+	   lastScrollTop = st <= 0 ? 0 : st; // For Mobile or negative scrolling
+	}, false);*/
+}
+
 function bindEvents(){	
 	for(events in settings.eventAndFlags){
 	    $(window).bind(events, methods.record);
@@ -183,48 +221,48 @@ function bindEvents(){
 
 // --- alarm timeout
 	
-	var metricsTimeOut = {
-		timeOut: function(aMessage) {
-			console.log(aMessage);
-			//reset time
-			delete this.timeoutID;
+var metricsTimeOut = {
+	timeOut: function(aMessage) {
+		console.log(aMessage);
+		//reset time
+		delete this.timeoutID;
+		this.cancelar();
+		this.setup();
+		
+		//call background metrics	
+		var logLine = [];
+
+		logLine[0] = methods.getOwnId();
+		logLine[1] = "-";
+		logLine[2] = methods.getTimeStamp(null);
+		logLine[3] = "metrics";
+		logLine[4] = "-";
+		logLine[5] = "-";
+		logLine[6] = "-";
+		logLine[7] = "-";
+		methods.sendLine(logLine);
+		
+		
+		
+	},
+
+	setup: function() {
+		if (typeof this.timeoutID === 'number') {
 			this.cancelar();
-			this.setup();
-			
-			//call background metrics	
-			var logLine = [];
+		}
+		console.log("TIMEOUT");
 
-			logLine[0] = methods.getOwnId();
-			logLine[1] = "-";
-			logLine[2] = methods.getTimeStamp(null);
-			logLine[3] = "metrics";
-			logLine[4] = "-";
-			logLine[5] = "-";
-			logLine[6] = "-";
-			logLine[7] = "-";
-			methods.sendLine(logLine);
-			
-			
-			
-		},
+		this.timeoutID = window.setTimeout(function(msg) {
+			this.timeOut(msg);
+		}.bind(this), 10000, 'Time out!');
+	},
 
-		setup: function() {
-			if (typeof this.timeoutID === 'number') {
-				this.cancelar();
-			}
-			console.log("TIMEOUT");
+  cancelar: function() {
+	window.clearTimeout(this.timeoutID);
+  }
+};
 
-			this.timeoutID = window.setTimeout(function(msg) {
-				this.timeOut(msg);
-			}.bind(this), 10000, 'Time out!');
-		},
-
-	  cancelar: function() {
-		window.clearTimeout(this.timeoutID);
-	  }
-	};
-	
-	//// --- alarm end
+//// --- alarm end
 
 function messageReceiver(message){
 	
@@ -359,6 +397,7 @@ function addOnPageLoad_() {
 		var scrollY = document.documentElement.dataset.scrollY || 0;
 		window.scrollTo(scrollX, scrollY);
 	});
+	console.log("addOnPageLoad_")
 }
 
 function generate() {

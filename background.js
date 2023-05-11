@@ -14,11 +14,18 @@ function getActiveTab() {
   return browser.tabs.query({active: true, currentWindow: true});
 }
 
+function sendListeners(listeners){
+	requestModifications('listeners');
+}
+
 function requestModifications(type){
 	if(!highCA)
 		return;
+	
+	
 	getActiveTab().then((tabs) => {
 		console.log(tabs);
+		
 		if(type == 'carousel-home' || type == 'carousel-unidades' ||  type == 'carousel-other'){
 			console.log('carousel');
 			browser.tabs.sendMessage(tabs[0].id, {
@@ -46,6 +53,17 @@ function requestModifications(type){
 				menulinks: "change"
 			});
 		}
+		else if(type == 'listeners'){
+			browser.tabs.sendMessage(tabs[0].id, {
+				listeners: "add"
+			});
+		}
+		else if(type == 'activity'){
+			browser.tabs.sendMessage(tabs[0].id, {
+				activity: "chsange"
+			});
+		}
+		
 
   }); 	
 }
@@ -57,7 +75,11 @@ function otherPages(){
 }
 
 function programacao(){
+	requestModifications('activity');
 	
+}
+function activity(){
+	requestModifications('activity');
 }
 
 function openSeach(){
@@ -377,7 +399,7 @@ browser.contextMenus.onClicked.addListener((info, tab) => {
 	
 	
 	function mouseUpHandler(line){
-		mouseup = parseFloat(line[2]);
+		mouseup = parseFloat(line[2]);5
 		clickDuration = mouseup - mouseDownTime;
 		clickDurationSum += clickDuration;
 		//print(lineNumber, mousedown, mouseup, data[3], clickDuration, clickDurationSum)
@@ -543,6 +565,8 @@ browser.contextMenus.onClicked.addListener((info, tab) => {
 					}
 					//simplification home:
 					else if(m.line[3] == "pageview"){
+						sendListeners();
+						console.log(m.line[7]);
 						//url = m.line[7].split("|")
 						if(m.line[7].split("|")[0] == "https://www.sescsp.org.br/"){
 							if(backHome == 1){
@@ -573,15 +597,23 @@ browser.contextMenus.onClicked.addListener((info, tab) => {
 						else if(m.line[7].includes('programacao')){
 							programacao();
 						}
+						else if(!(m.line[7].includes('moz-extension') && 
+							m.line[7].includes('loggerPopup.html')) ){
+							if( backHome == 0 ){
+								backHome = backHome + 1;
+							}
 							
-						else {
+							otherPages();
+							console.log('other');							
+						}
+						/*else {
 							if( backHome == 0 ){
 								backHome = backHome + 1;
 							}
 							
 							otherPages();
 							console.log('other');
-						}
+						}*/
 					}
 					/*else if(m.line[3] == "mouseup"){
 						//console.log("---mousoeup-----")
