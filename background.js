@@ -38,6 +38,7 @@ function requestModifications(type){
 			});
 		}
 		else if(type == 'program'){
+			console.log('program');
 			browser.tabs.sendMessage(tabs[0].id, {
 				program: "enable"
 			});
@@ -86,6 +87,7 @@ function openSeach(){
 	requestModifications('search');
 }
 function openProgramFilter(){
+	console.log('program');
 	requestModifications('program');
 }
 function mouseOverUnity(){

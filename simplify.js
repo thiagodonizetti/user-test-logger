@@ -5,8 +5,10 @@ function simplifyPageReceiver(request, sender, sendResponse) {
 	}
 	else if(request.carousel){
 		console.log('carousel', request.carousel);
-		if(request.carousel == 'carousel-home' || request.carousel ==  'carousel-other')
+		if(request.carousel == 'carousel-home' || request.carousel ==  'carousel-other'){
 			menuLinks();
+			addLabels();
+		}
 		carousel();
 		if(request.carousel == 'carousel-unidades'){
 			console.log('unidades');
@@ -18,7 +20,8 @@ function simplifyPageReceiver(request, sender, sendResponse) {
 		mouseOverUnity();
 	}
 	else if(request.search){
-		openSearch();		
+		openSearch();	
+		addLabels();		
 	}
 	else if(request.program){
 		openProgramFilter();		
@@ -40,6 +43,160 @@ function simplifyPageReceiver(request, sender, sendResponse) {
 }
 browser.runtime.onMessage.addListener(simplifyPageReceiver);
 
+
+function addLabels(){
+	
+	
+	//<span>procurar no site</span>
+	/*margin-left: 94px;
+top: 11px !important;*/
+	console.log('addLabels');
+	//label.addEventListener('click', (event) => {label.classList.add('fade');})
+	cssBusca = `
+		.labelMenu {
+			top: 45px;
+			position: absolute;
+			z-index: 10;
+			background-color: rgb(249, 237, 237);
+			color: rgb(0, 6, 7);
+			text-align: center;
+			text-decoration: none;
+			padding: 8px;
+			margin-left: 16px;
+			border: 0.1em solid black;
+			visibility: hidden;
+			border-radius: 8px;
+		}
+		.fadeLabel {
+			visibility: hidden;
+			opacity: 0;
+			transition: visibility 0s 0.2s, opacity 0.2s linear;
+		}
+		
+		.labelMenuPerfil {
+			margin-left: 94px;
+			top: 11px !important;
+			position: absolute;
+			z-index: 10;
+			background-color: rgb(249, 237, 237);
+			color: rgb(0, 6, 7);
+			text-align: center;
+			text-decoration: none;
+			padding: 8px;			
+			border: 0.1em solid black;
+			visibility: hidden;
+			border-radius: 8px;
+		}
+		
+		button.search-button{
+	
+			width: 168px;
+			height: 69px;
+			border: 0.1em solid white;
+			color: white;
+			font-weight: bold;
+			font-size: 17px;
+			text-decoration: underline;
+			border-radius: 21%;
+		}
+
+		input.sc-dIfARi {
+			heigh: 67px !important;
+		}
+	`
+	
+	
+    
+    /*var style = document.createElement("style");
+    style.type = "text/css";
+    style.id = id;
+	head.appendChild(createStyleElement(id, content));*/
+    
+	logo = document.getElementsByClassName('nav-logo')
+	var labelLogo = document.createElement("span");
+    labelLogo.classList.add("labelMenu");
+    labelLogo.id = 'labelLogo';
+	labelLogo.textContent = 'Página inicial';
+	logo[0].appendChild(labelLogo);
+	//appendStyleSheet('cssBusca', cssBusca);
+	//label.addEventListener('mouseover', (event) => {label.classList.add('fadeLabel');});		
+	
+	logo[0].addEventListener('mouseover', (event) => {		
+		labelLogo.classList.remove('fadeLabel');
+		labelLogo.visibility = 'visible'
+	})	
+	logo[0].addEventListener('mouseout', (event) => {
+		labelLogo.classList.add('fadeLabel');		
+	})	
+	logo[0].addEventListener('click', (event) => {
+		labelLogo.classList.add('fadeLabel');
+		
+	})	
+	labelLogo.style.visibility = 'visible';
+	labelLogo.style.top = '55px';
+	
+	
+	
+	
+	
+	icons = document.getElementsByClassName('sc-bqWxrE')
+	var labelSearch = document.createElement("span");
+    labelSearch.classList.add("labelMenu");
+    labelSearch.id = 'labelBusca';
+	labelSearch.textContent = 'Pesquisar no site';
+	icons[0].appendChild(labelSearch);
+	appendStyleSheet('cssBusca', cssBusca);
+	//label.addEventListener('mouseover', (event) => {label.classList.add('fadeLabel');});		
+	
+	icons[0].addEventListener('mouseover', (event) => {
+		if(document.getElementsByClassName('sc-fEXmlR koJJbR search-container').length == 0){
+			labelSearch.classList.remove('fadeLabel');
+			labelSearch.visibility = 'visible'
+		}
+	})	
+	icons[0].addEventListener('mouseout', (event) => {
+		labelSearch.classList.add('fadeLabel');
+		
+	})	
+	icons[0].addEventListener('click', (event) => {
+		labelSearch.classList.add('fadeLabel');
+		
+		setTimeout(function(){
+			//alert("I am setTimeout");
+			document.getElementsByClassName('search-button')[0].innerHTML = "<img src=\"https://www.sescsp.org.br//wp-content/plugins/sesc-menu/src/assets/loupe.svg\" alt=\"icone de lupa\" width=\"23\" height=\"18\"> Clique para Pesquisar";
+		},500); //delay is in milliseconds  
+		
+		
+		console.log("clique");
+		
+	})	
+	labelSearch.style.visibility = 'visible';
+	
+	var labelPerfil = document.createElement("span");
+    labelPerfil.classList.add("labelMenuPerfil");
+    labelPerfil.id = 'labelPerfil';
+	labelPerfil.textContent = 'Perfil';
+	icons[1].appendChild(labelPerfil);
+	//appendStyleSheet('cssBusca', cssBusca);
+	//label.addEventListener('mouseover', (event) => {label.classList.add('fadeLabel');});		
+	
+	icons[1].addEventListener('mouseover', (event) => {
+		labelPerfil.classList.remove('fadeLabel');
+		labelPerfil.visibility = 'visible'
+	})	
+	icons[1].addEventListener('mouseout', (event) => {
+		labelPerfil.classList.add('fadeLabel');
+		
+	})	
+	icons[1].addEventListener('click', (event) => {
+		labelPerfil.classList.add('fadeLabel');
+		
+	})	
+	labelPerfil.style.visibility = 'visible';
+	
+	
+	document.getElementsByClassName('search-button')[0].text
+}
 
 function addListeners(){
 	//window.addEventListener("load", myFunction);
@@ -272,13 +429,68 @@ function carousel(){
 
 function openSearch(){
 	//abrir busca
-	search = document.getElementsByClassName("sc-bqWxrE beWxO nav-button toogle-modal");
-	search[0].click();
+	//search = document.getElementsByClassName("sc-bqWxrE beWxO nav-button toogle-modal");
+	//search[0].click();
 }
 
 function openProgramFilter(){
+	console.log('program');
 	//Menu de programação
-	document.getElementById('dropdownMenuButton').click();
+	//document.getElementById('dropdownMenuButton').click();
+	
+	programCircleCSS = `
+		.fadeCircle{
+			
+			opacity: 0 !important;
+			transform: scale( 1.05 ) !important;
+			overflow: hidden !important;
+			height: 45px !important;
+			transition: transform 2s 0.2s, opacity 2s 3s ease-in-out;
+			height: 40px !important;
+		}
+		circle.btnFilter{
+			background-color: rgb(7, 248, 218) !important;
+			position: absolute;
+			transform: scale(0.1);
+			opacity: 0.7;	
+			margin: 13px;
+		}
+	`
+	button = document.getElementById('dropdownMenuButton');
+	
+	var circle = document.createElement("circle");
+    circle.classList.add("btnFilter");
+    circle.id = 'programCircle';
+	//circle.style.backgroundColor = 'rgb(203, 208, 214)';//#84a4ca';
+	//circle.style.opacity = '0.6';
+	circle.style.position = 'absolute';
+	
+	circle.addEventListener('click', (event) => { 
+		document.getElementById('dropdownMenuButton').click();
+	});
+	
+	
+	
+	//labelSearch.textContent = 'Pesquisar no site';
+	button.parentNode.appendChild(circle);
+	appendStyleSheet('programCircleCSS', programCircleCSS)//.then(
+	
+	//alert("before setTimeout");
+	setTimeout(function(){
+		//alert("I am setTimeout");
+		circle.classList.add('fadeCircle');
+		
+		setTimeout(function(){
+			//alert("I am setTimeout");
+			circle.style.display = 'none';
+		},5000); //delay is in milliseconds    
+   },1000); //delay is in milliseconds 
+	   
+	
+
+	//alert("after setTimeout");
+	
+	
 }
 
 var unityOpen = false;
