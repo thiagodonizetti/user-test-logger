@@ -1,3 +1,13 @@
+/* TODO:
+	- Check old functions not being used
+	- Check changes flow for redundant calls
+	- Check changes for how to make 'generic' like apply css changes and listeners according to calls
+	- Check distratores file to implement new changes flow
+	- Separate CSS and functions of different elements/page in different methods/calls
+	- Increase font-size for 'abstract' text in the items (bellow h6)
+	- check filter button glow (dleay)
+	- Test every page 
+*/
 function simplifyPageReceiver(request, sender, sendResponse) {
 	console.log(request);
 	if(request.replacement){
@@ -5,11 +15,13 @@ function simplifyPageReceiver(request, sender, sendResponse) {
 	}
 	else if(request.carousel){
 		console.log('carousel', request.carousel);
+		carousel();
 		if(request.carousel == 'carousel-home' || request.carousel ==  'carousel-other'){
 			menuLinks();
 			addLabels();
+			homeContent();
 		}
-		carousel();
+		
 		if(request.carousel == 'carousel-unidades'){
 			console.log('unidades');
 			appendStyleSheet('unidadesInfoCSS', unidadesInfoCSS);
@@ -40,8 +52,85 @@ function simplifyPageReceiver(request, sender, sendResponse) {
 		
 		appendStyleSheet('menuFixo', menuFixo);
 	}
+	else if(request.fixmenu){
+		
+		appendStyleSheet('menuFixo', menuFixo);
+	}
 }
 browser.runtime.onMessage.addListener(simplifyPageReceiver);
+
+function homeContent(){
+	console.log('xcontent');
+	homeContentCSS = `
+
+		div.container{
+			max-width: 1092px !important;
+			padding: 0 5px !important;
+		}
+		
+		h6{
+			text-decoration: underline!important; text-decoration-color: #3477c8 !important; font-weight: 800; font-size: 1.1rem;
+		} 
+		
+		h6:hover {color: darkblue !important;} 
+		
+		.programacao--container .row{
+			display: block !important; 
+		}
+		
+		.programacao--item {
+			text-align: center;
+			margin-left: 150px;
+			width: 80%;
+			padding-left: 107px;
+			padding-right: 211px;
+		}
+		
+		.item--col--link--conteudo--resumo{
+			font-size: 16px !important;
+		}
+		
+		.item--col--link--conteudo--imagem {
+			width: calc(50% + 16px);
+			height: 143px;
+		}
+		.__esgotado.programacao--item--imagem--alerta, .alerta.__esgotado{
+			left: 232px;
+			width: 34%;
+		} 
+		
+		.home--blog .editorial-row{
+			display: block !important; 
+		}
+		
+		.item--col {
+			max-width: 100%;
+			text-align: center;
+			margin-left: 175px;
+			width: 80%;
+			padding-left: 107px;
+			padding-right: 211px;	
+		}
+		
+		.item--col--link--conteudo--imagem {
+			width: calc(80% + 16px);
+			height: 208PX;
+			margin-left: 40px;
+			border-top-left-radius: 15px;
+			border-top-right-radius: 15px;
+		}
+		
+		
+	
+	`;
+	appendStyleSheet('homeContentCSS', homeContentCSS);
+	
+	acoes = document.getElementsByClassName('carrossel-acoes');
+	if(acoes.length > 0){
+		acoes[0].parentNode.style.display = 'none';
+	}
+	
+}
 
 
 function addLabels(){
@@ -90,18 +179,25 @@ top: 11px !important;*/
 		
 		button.search-button{
 	
-			width: 168px;
-			height: 69px;
-			border: 0.1em solid white;
+			width: 178px;
+			height: 51px;
+			border: none;
 			color: white;
 			font-weight: bold;
-			font-size: 17px;
+			font-size: 16px;
 			text-decoration: underline;
-			border-radius: 21%;
+			border-radius: 20px;
+			font-family: Nunito,sans-serif;
+			text-align: center;
+			padding: 8px;
 		}
 
 		input.sc-dIfARi {
-			heigh: 67px !important;
+			height: 47px !important;
+		}
+		.search-button img {
+			width: 27px;
+			height: 27px;
 		}
 	`
 	
@@ -111,8 +207,9 @@ top: 11px !important;*/
     style.type = "text/css";
     style.id = id;
 	head.appendChild(createStyleElement(id, content));*/
-    
+    console.log('logo');
 	logo = document.getElementsByClassName('nav-logo')
+	console.log(logo);
 	var labelLogo = document.createElement("span");
     labelLogo.classList.add("labelMenu");
     labelLogo.id = 'labelLogo';
@@ -138,8 +235,9 @@ top: 11px !important;*/
 	
 	
 	
-	
+	console.log('icons');
 	icons = document.getElementsByClassName('sc-bqWxrE')
+	console.log(icons);
 	var labelSearch = document.createElement("span");
     labelSearch.classList.add("labelMenu");
     labelSearch.id = 'labelBusca';
@@ -149,25 +247,47 @@ top: 11px !important;*/
 	//label.addEventListener('mouseover', (event) => {label.classList.add('fadeLabel');});		
 	
 	icons[0].addEventListener('mouseover', (event) => {
+		console.log('search');
 		if(document.getElementsByClassName('sc-fEXmlR koJJbR search-container').length == 0){
 			labelSearch.classList.remove('fadeLabel');
 			labelSearch.visibility = 'visible'
 		}
+		console.log('search 2');
 	})	
 	icons[0].addEventListener('mouseout', (event) => {
 		labelSearch.classList.add('fadeLabel');
 		
 	})	
+	
+	// Done: Change click listener to input on key press listener to add texto to search button
 	icons[0].addEventListener('click', (event) => {
 		labelSearch.classList.add('fadeLabel');
-		
 		setTimeout(function(){
+			input = document.getElementsByClassName("sc-dIfARi kuAjmt search-input")[0];
+			//console.log(input);
+			input.addEventListener('keydown', (event) => {
+				setTimeout(function(){
+				
+					if(event.target.value.length > 2){
+						document.getElementsByClassName('search-button')[0].innerHTML = "<img src=\"https://www.sescsp.org.br//wp-content/plugins/sesc-menu/src/assets/loupe.svg\" alt=\"icone de lupa\" width=\"23\" height=\"18\"> Clique para Pesquisar";
+					}
+				
+					//else if(event.target.value.length - 1 < 3){
+					else{
+						document.getElementsByClassName('search-button')[0].innerHTML = "<img src=\"https://www.sescsp.org.br//wp-content/plugins/sesc-menu/src/assets/loupe.svg\" alt=\"icone de lupa\" width=\"23\" height=\"18\">";
+					}
+				},100); 
+				
+			});
+		},500); 
+		
+		/*setTimeout(function(){
 			//alert("I am setTimeout");
 			document.getElementsByClassName('search-button')[0].innerHTML = "<img src=\"https://www.sescsp.org.br//wp-content/plugins/sesc-menu/src/assets/loupe.svg\" alt=\"icone de lupa\" width=\"23\" height=\"18\"> Clique para Pesquisar";
-		},500); //delay is in milliseconds  
+		},500);   */
 		
 		
-		console.log("clique");
+		//console.log("clique");
 		
 	})	
 	labelSearch.style.visibility = 'visible';
@@ -195,7 +315,7 @@ top: 11px !important;*/
 	labelPerfil.style.visibility = 'visible';
 	
 	
-	document.getElementsByClassName('search-button')[0].text
+	//document.getElementsByClassName('search-button')[0].text
 }
 
 function addListeners(){
@@ -223,6 +343,8 @@ menuFixo = `
     z-index:  99;
 }
 `;
+
+
 homeCSS = `
 	.fNCgwt {
 		max-height: 433px;
@@ -285,13 +407,40 @@ unidadesInfoCSS = `
 	}
 	
 	.item--col--link--conteudo--imagem {
-		width: calc(50% + 16px);
-		height: 143px;
+		/*width: calc(50% + 16px);*/
+		/*height: 143px;*/
+		width: calc(80% + 16px);
+		height: 200px;
+		border-top-left-radius: 15px;
+		border-top-right-radius: 15px;
+
+
 	}
     .__esgotado.programacao--item--imagem--alerta, .alerta.__esgotado{
 		left: 232px;
 		width: 34%;
 	}   
+	
+	.home--blog .editorial-row{
+			display: block !important; 
+		}
+		
+	.item--col {
+		max-width: 100%;
+		text-align: center;
+		margin-left: 175px;
+		width: 80%;
+		padding-left: 107px;
+		padding-right: 211px;	
+	}
+	
+	.item--col--link--conteudo--imagem {
+		width: calc(80% + 16px);
+		height: 208PX;
+		margin-left: 40px;
+		border-top-left-radius: 15px;
+		border-top-right-radius: 15px;
+	}
 	
 	
 `;
@@ -365,8 +514,8 @@ function menuLinks(){
 	*/
 
 	for(s in styles){
-		console.log(document.styleSheets);
-		console.log(styles[s]);
+		//console.log(document.styleSheets);
+		//console.log(styles[s]);
 		document.styleSheets[0].insertRule(styles[s], 0);
 	}
 	//document.styleSheets[0].insertRule("nav.nav-wrapper span, a{text-decoration: underline;} ", 0);
@@ -379,7 +528,7 @@ function menuLinks(){
 function appendStyleSheet(id, content) {
     if (!document.querySelector("#" + id)) {
         var head = document.head || document.getElementsByTagName("head")[0];
-        console.log(head);
+        //console.log(head);
         head.appendChild(createStyleElement(id, content));
     }
 }
@@ -414,6 +563,7 @@ function eatPage(replacement){
 }
 
 function carousel(){
+	console.log("carrossel", document.getElementsByClassName("home--destaques"), document.getElementsByClassName("carrossel"));
 	//document.getElementsByClassName("carrossel--itens")[0].remove();
 	//document.getElementsByClassName("carrossel--itens")[0].id = 'carrossel';
 	if(document.getElementsByClassName("home--destaques").length > 0){
@@ -434,7 +584,7 @@ function openSearch(){
 }
 
 function openProgramFilter(){
-	console.log('program');
+	//console.log('program');
 	//Menu de programação
 	//document.getElementById('dropdownMenuButton').click();
 	
@@ -445,46 +595,63 @@ function openProgramFilter(){
 			transform: scale( 1.05 ) !important;
 			overflow: hidden !important;
 			height: 45px !important;
-			transition: transform 2s 0.2s, opacity 2s 3s ease-in-out;
+			transition: transform 1s 0.1s, opacity 4s 0.5s ease-in-out;
 			height: 40px !important;
 		}
 		circle.btnFilter{
 			background-color: rgb(7, 248, 218) !important;
 			position: absolute;
-			transform: scale(0.1);
+			transform: scale(0.0);
 			opacity: 0.7;	
 			margin: 13px;
 		}
 	`
 	button = document.getElementById('dropdownMenuButton');
-	
-	var circle = document.createElement("circle");
-    circle.classList.add("btnFilter");
-    circle.id = 'programCircle';
-	//circle.style.backgroundColor = 'rgb(203, 208, 214)';//#84a4ca';
-	//circle.style.opacity = '0.6';
-	circle.style.position = 'absolute';
-	
-	circle.addEventListener('click', (event) => { 
-		document.getElementById('dropdownMenuButton').click();
-	});
-	
-	
-	
-	//labelSearch.textContent = 'Pesquisar no site';
-	button.parentNode.appendChild(circle);
-	appendStyleSheet('programCircleCSS', programCircleCSS)//.then(
-	
-	//alert("before setTimeout");
-	setTimeout(function(){
-		//alert("I am setTimeout");
-		circle.classList.add('fadeCircle');
+	circle = document.getElementById('programCircle')
+	if(circle){
+		circle.classList.remove('fadeCircle');
+		circle.style.display = 'block';
+		//alert("before setTimeout");
+		setTimeout(function(){
+			//alert("I am setTimeout");			
+			circle.classList.add('fadeCircle');
+			setTimeout(function(){
+				//alert("I am setTimeout");
+				circle.style.display = 'none';
+			},3000); //delay is in milliseconds    
+	   },300); //delay is in milliseconds 
 		
+		
+	}
+	else {
+		var circle = document.createElement("circle");
+		circle.classList.add("btnFilter");
+		circle.id = 'programCircle';
+		//circle.style.backgroundColor = 'rgb(203, 208, 214)';//#84a4ca';
+		//circle.style.opacity = '0.6';
+		circle.style.position = 'absolute';
+		
+		circle.addEventListener('click', (event) => { 
+			document.getElementById('dropdownMenuButton').click();
+		});
+		
+		
+		
+		//labelSearch.textContent = 'Pesquisar no site';
+		button.parentNode.appendChild(circle);
+		appendStyleSheet('programCircleCSS', programCircleCSS)//.then(
+		
+		//alert("before setTimeout");
 		setTimeout(function(){
 			//alert("I am setTimeout");
-			circle.style.display = 'none';
-		},5000); //delay is in milliseconds    
-   },1000); //delay is in milliseconds 
+			circle.classList.add('fadeCircle');
+			
+			setTimeout(function(){
+				//alert("I am setTimeout");
+				circle.style.display = 'none';
+			},5000); //delay is in milliseconds    
+	   },1000); //delay is in milliseconds 
+	}
 	   
 	
 
@@ -549,9 +716,9 @@ function mouseOverUnity(){
 	//add mouse over/out listener		sc-gikAfH eYAQtw toogle-dropdown
 	unidades[1].addEventListener("mouseover", (event) => {
 		//open
-		console.log("over", unidades[1]);
+		//console.log("over", unidades[1]);
 		if(document.getElementsByClassName("sc-hBxehG dnsJqu nav-modal").length == 0){
-			console.log("click");
+			//console.log("click");
 			unidades[1].click(function() {
 				console.log(document.getElementsByClassName("sc-hBxehG dnsJqu nav-modal"));
 			});
@@ -560,10 +727,10 @@ function mouseOverUnity(){
 			for(i=2; i < bar.length; i++){
 				bar[i].addEventListener("mouseover", (event) => {
 					//close unity
-					console.log("over bar");
+					//console.log("over bar");
 					//console.log(document.getElementsByClassName("sc-hBxehG dnsJqu nav-modal").length );
 					if(document.getElementsByClassName("sc-hBxehG dnsJqu nav-modal").length > 0){
-						console.log("bar ");
+						//console.log("bar ");
 						unidades[1].click(); 
 					}
 		

@@ -64,6 +64,11 @@ function requestModifications(type){
 				activity: "chsange"
 			});
 		}
+		else if(type == 'fixmenu'){
+			browser.tabs.sendMessage(tabs[0].id, {
+				fixmenu: "fix"
+			});
+		}
 		
 
   }); 	
@@ -76,7 +81,18 @@ function otherPages(){
 }
 
 function programacao(){
-	requestModifications('activity');
+	//requestModifications('activity');
+	//List activies in single column
+	//Do not change top menu
+	otherPages();
+	
+}
+
+function searchResults(){
+	
+	//List activies in single column
+	//Do not change top menu
+	otherPages();
 	
 }
 function activity(){
@@ -530,159 +546,174 @@ browser.contextMenus.onClicked.addListener((info, tab) => {
 		
 			portsFromCS[currentPort].onMessage.addListener(function(m) {
 				if(m.blob == undefined){
-					loggerPack.push(m.line);
-					countLines++;
+					if(m.line == 'scroll'){
+						console.log('scroll message');
+						openProgramFilter()
+					}
+					else{
 					
-					//console.log(m.line[3]);
-					if(keysNumber > 0){
-						if(parseInt(m.line[2]) - lastKey > keyThreshold){
-							keyMetricsHandler();
-							keysNumber = 0;							
-						}
-					}
-					
-					if(m.line[3] == "click")
-					{
-						clicksHandlerModel(m.line);
-						//clicksModel++;
-					}
-					else if(m.line[3] == "beforeunload"){
-						//Done
-						metricsTimeHandler(m.line);
-					}
-					else if(m.line[3] == "mousemove"){
-						moveHandlerModel(m.line);
-					}
-					else if(m.line[3] == "mousedown"){
-						mouseDownHandlerMOdel(m.line);
-					}
-					else if(m.line[3] == "metrics"){
-						//Done
-						metricsTimeHandler(m.line);
-					}
-					//New Tree: Including mean click duration
-					else if(m.line[3] == "mouseup" && mouseDownTime != 0){
-						//console.log("---mousoeup-----")
-						mouseUpHandler(m.line);
-					}
-					//simplification home:
-					else if(m.line[3] == "pageview"){
-						sendListeners();
-						console.log(m.line[7]);
-						//url = m.line[7].split("|")
-						if(m.line[7].split("|")[0] == "https://www.sescsp.org.br/"){
-							if(backHome == 1){
-								backHome = backHome + 1;
-								carousel('home');
-								mouseOverUnity();
-							}
-							else if(backHome == 2){
-								carousel('home');
-								mouseOverUnity();
-								openProgramFilter();
-								backHome = backHome + 1;								
-							}
-							else if(backHome > 2){
-								carousel('home');
-								mouseOverUnity();
-								openSeach();
-								backHome = backHome + 1;	
-								console.log('back 3');						
-							}							
-						}
-						else if(m.line[7].includes('/unidades/')){
-							carousel('unidades');
-							if( backHome == 0 ){
-								backHome = backHome + 1;
-							}
-						}
-						else if(m.line[7].includes('programacao')){
-							programacao();
-						}
-						else if(!(m.line[7].includes('moz-extension') && 
-							m.line[7].includes('loggerPopup.html')) ){
-							if( backHome == 0 ){
-								backHome = backHome + 1;
-							}
-							
-							otherPages();
-							console.log('other');							
-						}
-						/*else {
-							if( backHome == 0 ){
-								backHome = backHome + 1;
-							}
-							
-							otherPages();
-							console.log('other');
-						}*/
-					}
-					/*else if(m.line[3] == "mouseup"){
-						//console.log("---mousoeup-----")
-						mouseUpHandler(m.line);
-					}*/
-					else if(m.line[3] == "keydown"){
+						loggerPack.push(m.line);
+						countLines++;
+						
+						//console.log(m.line[3]);
 						if(keysNumber > 0){
 							if(parseInt(m.line[2]) - lastKey > keyThreshold){
 								keyMetricsHandler();
-								keysNumber = 1;
+								keysNumber = 0;							
+							}
+						}
+						
+						if(m.line[3] == "click")
+						{
+							clicksHandlerModel(m.line);
+							//clicksModel++;
+						}
+						else if(m.line[3] == "beforeunload"){
+							//Done
+							metricsTimeHandler(m.line);
+						}
+						else if(m.line[3] == "mousemove"){
+							moveHandlerModel(m.line);
+						}
+						else if(m.line[3] == "mousedown"){
+							mouseDownHandlerMOdel(m.line);
+						}
+						else if(m.line[3] == "metrics"){
+							//Done
+							metricsTimeHandler(m.line);
+						}
+						//New Tree: Including mean click duration
+						else if(m.line[3] == "mouseup" && mouseDownTime != 0){
+							//console.log("---mousoeup-----")
+							mouseUpHandler(m.line);
+						}
+						//simplification home:
+						else if(m.line[3] == "pageview"){
+							//sendListeners();
+							console.log(m.line[7]);
+							//url = m.line[7].split("|")
+							if(m.line[7].split("|")[0] == "https://www.sescsp.org.br/"){
+								if(backHome > 0){
+									backHome = backHome + 1;
+									carousel('home');
+									mouseOverUnity();
+									openProgramFilter();
+									openSeach();
+								}
+								/*else if(backHome == 2){
+									carousel('home');
+									mouseOverUnity();
+									openProgramFilter();
+									backHome = backHome + 1;								
+								}
+								else if(backHome > 2){
+									carousel('home');
+									mouseOverUnity();
+									openSeach();
+									backHome = backHome + 1;	
+									console.log('back 3');						
+								}		*/					
+							}
+							else if(m.line[7].includes('/unidades/')){
+								carousel('unidades');
+								if( backHome == 0 ){
+									backHome = backHome + 1;
+								}
+							}
+							else if(m.line[7].includes('programacao')){
+								activity();
+							}
+							else if(m.line[7].includes('/programacao/?')){
+								programacao();
+							}
+							else if(m.line[7].includes('https://www.sescsp.org.br/?s=')){
+								searchResults();
+							}
+							else if(!(m.line[7].includes('moz-extension') && 
+								m.line[7].includes('loggerPopup.html')) ){
+								if( backHome == 0 ){
+									backHome = backHome + 1;
+								}
+								
+								otherPages();
+								console.log('other');							
+							}
+							/*else {
+								if( backHome == 0 ){
+									backHome = backHome + 1;
+								}
+								
+								otherPages();
+								console.log('other');
+							}*/
+						}
+						/*else if(m.line[3] == "mouseup"){
+							//console.log("---mousoeup-----")
+							mouseUpHandler(m.line);
+						}*/
+						else if(m.line[3] == "keydown"){
+							if(keysNumber > 0){
+								if(parseInt(m.line[2]) - lastKey > keyThreshold){
+									keyMetricsHandler();
+									keysNumber = 1;
+									firstKey = lastKey = parseInt(m.line[2]);
+								}
+								else{
+									lastKey = parseInt(m.line[2]);
+									keysNumber += 1;
+								}
+							}
+							else {
 								firstKey = lastKey = parseInt(m.line[2]);
+								keysNumber = 1;							
 							}
-							else{
-								lastKey = parseInt(m.line[2]);
-								keysNumber += 1;
+							
+						}
+						//New Tree: Including strokeDuration
+						else{
+							current_time = parseFloat(m.line[2]);
+							
+							if(strokeLength > 0 && current_time - currMoveModel > pauseThreshold){
+								
+								if(strokeLength == 0){
+									strokeDuration = straightness = 0;
+									console.log("stroke 0 PAUSE: "+current_time + "- " + strokeDuration + " - " + strokeDurationSum/strokes );
+								}
+								else{
+									strokeDuration = parseInt(m.line[2]) - strokeIniTime;
+									straightness  =  Math.sqrt(Math.pow(x1Stroke - xNStroke, 2) + Math.pow(y1Stroke - yNStroke, 2))/strokeLength;	
+									console.log("stroke 0 PAUSE 1: "+current_time + "- " + strokeDuration + " - " + strokeDurationSum/strokes );								
+								}
+								
+								strokeDurationSum += strokeDuration;
+								strokeLengthSum += strokeLength;
+								straightnessSum += straightness;
+								strokeLength =  strokeIniTime = 0;
+								strokes += 1;
+								meanStrokeDuration = (strokeDurationSum/strokes) / 1000;
+								meanStrokeLength = (strokeLengthSum/strokes);
+								meanStraightness = straightnessSum/strokes;
+								console.log("stroke 0 PAUSE 2: "+current_time + "- " + strokeDuration + " - " + strokeDurationSum/strokes );		
+								//strokeLength =  strokeIniTime = 0
+								
+								
 							}
+							
 						}
-						else {
-							firstKey = lastKey = parseInt(m.line[2]);
-							keysNumber = 1;							
-						}
-						
+						//if(countLines > 100 && !testing){
+						/* if(m.line[2] - deltaTime > 10000 && !testing){
+							console.log("TESTING FAIL");
+							//countLines = 0;
+							timeStampToLog = m.line[2];
+							taskEndTime = new Date().getTime();		
+							//console.log(taskEndTime);
+							// Done: Alterado para 100 para considerar a divisao por 100 linhas
+							taskTotalTime = (taskEndTime - taskIniTime)/1000;	// div 100 para miliseconds				
+							countLines = 0;
+							deltaTime = m.line[2];
+							writeLine(loggerPack);
+						} */
 					}
-					//New Tree: Including strokeDuration
-					else{
-						current_time = parseFloat(m.line[2]);
-						
-						if(strokeLength > 0 && current_time - currMoveModel > pauseThreshold){
-							
-							if(strokeLength == 0){
-								strokeDuration = straightness = 0;
-								console.log("stroke 0 PAUSE: "+current_time + "- " + strokeDuration + " - " + strokeDurationSum/strokes );
-							}
-							else{
-								strokeDuration = parseInt(m.line[2]) - strokeIniTime;
-								straightness  =  Math.sqrt(Math.pow(x1Stroke - xNStroke, 2) + Math.pow(y1Stroke - yNStroke, 2))/strokeLength;	
-								console.log("stroke 0 PAUSE 1: "+current_time + "- " + strokeDuration + " - " + strokeDurationSum/strokes );								
-							}
-							
-							strokeDurationSum += strokeDuration;
-							strokeLengthSum += strokeLength;
-							straightnessSum += straightness;
-							strokeLength =  strokeIniTime = 0;
-							strokes += 1;
-							meanStrokeDuration = (strokeDurationSum/strokes) / 1000;
-							meanStrokeLength = (strokeLengthSum/strokes);
-							meanStraightness = straightnessSum/strokes;
-							console.log("stroke 0 PAUSE 2: "+current_time + "- " + strokeDuration + " - " + strokeDurationSum/strokes );		
-							//strokeLength =  strokeIniTime = 0
-							
-							
-						}
-						
-					}
-					//if(countLines > 100 && !testing){
-					/* if(m.line[2] - deltaTime > 10000 && !testing){
-						console.log("TESTING FAIL");
-						//countLines = 0;
-						timeStampToLog = m.line[2];
-						taskEndTime = new Date().getTime();		
-						//console.log(taskEndTime);
-						// Done: Alterado para 100 para considerar a divisao por 100 linhas
-						taskTotalTime = (taskEndTime - taskIniTime)/1000;	// div 100 para miliseconds				
-						countLines = 0;
-						deltaTime = m.line[2];
-						writeLine(loggerPack);
-					} */
 				}
 				else{
 					if(blobs[m.id] == undefined){
@@ -1446,8 +1477,13 @@ function createGraph(loggerPack, callback){
 		}
 		else{
 			node.occurrences++;
-			node.meanDistance = calcMean(node.meanDistance, distance, node.occurrences);
-			node.meanTimestamp = calcMean(node.meanTimestamp, ( Number( line[2] ) - initialTs ), node.occurrences); 
+			if(!jump)
+			{
+				node.meanDistance = calcMean(node.meanDistance, distance, node.occurrences);
+				node.meanTimestamp = calcMean(node.meanTimestamp, ( Number( line[2] ) - initialTs ), node.occurrences); 
+			}
+			
+			
 		}
 		
 		link = graph.getEdge(previousNode.id, node.id);
@@ -1581,7 +1617,7 @@ function Queue(){var a=[],b=0;this.getLength=function(){return a.length-b};this.
 
 function readTreeFile(){
 	
-	var requestURL = 'data//tree-resboth.json';
+	var requestURL = 'data//tree.json';
 	
 	//console.log(requestURL);
 	var request = new XMLHttpRequest();

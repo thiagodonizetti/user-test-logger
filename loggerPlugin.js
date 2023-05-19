@@ -179,7 +179,7 @@ var methods = {
 	}
 	
 }
-
+var scrollDown = 0;
 function getScrollDirections(){
 	//console.log('getScrollDirections');
 	//console.log( window.pageYOffset );
@@ -189,10 +189,19 @@ function getScrollDirections(){
 	var st = window.pageYOffset || document.documentElement.scrollTop; // Credits: "https://github.com/qeremy/so/blob/master/so.dom.js#L426"
 	if (st > lastScrollTop) {
 		// downscroll code
-		console.log("down scroll");
+		scrollDown = scrollDown + 1;
+		//console.log("down scroll");
 	} else if (st < lastScrollTop) {
+		 console.log('scrollD', scrollDown);
 		// upscroll code
-		console.log('up scroll');
+		if(scrollDown > 50 && st < 53){
+			console.log('top');
+			scrollDown = 0;
+			methods.sendLine('scroll');
+			//console.log('2 top top top');
+			//console.log('1 top top top');
+		}
+		//console.log('up scroll');
 	} 
 	else{
 		console.log(lastScrollTop, st);
