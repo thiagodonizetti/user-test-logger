@@ -69,15 +69,21 @@ function requestModifications(type){
 				fixmenu: "fix"
 			});
 		}
+		else if(type == 'other'){
+			browser.tabs.sendMessage(tabs[0].id, {
+				other: "all"
+			});
+		}
 		
 
   }); 	
 }
 
 function otherPages(){
-	requestModifications('menulinks');
-	requestModifications('fixmenu');
-	requestModifications('carousel-other')
+	requestModifications('other');
+	//requestModifications('menulinks');
+	//requestModifications('fixmenu');
+	//requestModifications('carousel-other')
 }
 
 function programacao(){

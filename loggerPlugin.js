@@ -190,6 +190,8 @@ function getScrollDirections(){
 	if (st > lastScrollTop) {
 		// downscroll code
 		scrollDown = scrollDown + 1;
+		console.log(st, document.getElementsByClassName('row programacao--row js-programacao-container')[0].offsetHeight);
+		//Todo: send button highlight to ver mais when the button appears (offsetHeight); unidades
 		//console.log("down scroll");
 	} else if (st < lastScrollTop) {
 		 console.log('scrollD', scrollDown);
