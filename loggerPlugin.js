@@ -191,6 +191,7 @@ function getScrollDirections(){
 		// downscroll code
 		scrollDown = scrollDown + 1;
 		console.log(st, document.getElementsByClassName('row programacao--row js-programacao-container')[0].offsetHeight);
+		console.log(document.URL);
 		//Todo: send button highlight to ver mais when the button appears (offsetHeight); unidades
 		//console.log("down scroll");
 	} else if (st < lastScrollTop) {
@@ -199,7 +200,8 @@ function getScrollDirections(){
 		if(scrollDown > 50 && st < 53){
 			console.log('top');
 			scrollDown = 0;
-			methods.sendLine('scroll');
+			if( document.URL == "https://www.sescsp.org.br/")
+				methods.sendLine('scroll');
 			//console.log('2 top top top');
 			//console.log('1 top top top');
 		}

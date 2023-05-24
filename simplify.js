@@ -10,15 +10,17 @@ menuFixo = `
 
 pageContentCSS = `
 	div.container{
-		max-width: 1092px !important;
-		padding: 0 5px !important;
+		/*max-width: 1092px !important;*/
+		max-width: 1186px;
+		padding: 0 8px;
+		/*padding: 0 5px !important;*/
 	}
 	
 	h6{
 		text-decoration: underline!important; 
 		text-decoration-color: #3477c8 !important; 
 		font-weight: 800; 
-		font-size: 1.1rem;
+		font-size: 18px;
 	} 
 	
 	h6:hover {
@@ -31,10 +33,20 @@ pageContentCSS = `
 	
 	.programacao--item {
 		text-align: center;
-		margin-left: 150px;
+		margin-left: 175px;
 		width: 80%;
 		padding-left: 107px;
 		padding-right: 211px;
+	}
+	
+	.programacao--item--container {
+		paddin: 0 8px !important;
+	}
+	
+	.programacao--item--imagem{
+		width: calc(80% + 16px) !important;
+		height: 208px !important;
+		margin-left: 40px !important;
 	}
 	
 	.item--col--link--conteudo--resumo{
@@ -71,6 +83,12 @@ pageContentCSS = `
 		border-top-right-radius: 15px;
 	}	
 	
+	.programacao--item--complemento{
+		font-size: 16px !important;
+	}
+	.programacao--item--data{
+		font-size: 15px !important;
+	}
 	
 `;
 
@@ -184,6 +202,21 @@ homeCSS = `
 	}
 `;
 
+
+/* serviços */
+
+servicos = `
+	#main_header {
+		position: fixed !import;
+		z-index: 99 !import;
+		background-color: white !import;
+	}
+	
+	#content {
+		top: 186px;
+	}
+
+`;
 /*var contentCSS = `
 	h6{
 		text-decoration: underline!important; 
@@ -220,6 +253,18 @@ homeCSS = `
 
 /* --------- UNIDADES CSS ---------*/
 unidadesInfoCSS = `
+	/* address info  and links */
+	nav.nav-unidade .row ul li {
+		font-size: 16px;
+		font-weight: 800;
+	}
+	
+	nav.nav-unidade .row ul.unidade-detalhes li a {
+		text-decoration: underline;	
+	}
+`;
+
+old_unidadesInfoCSS = `
 	nav.nav-unidade .row ul li {
 		font-size: 14px;
 		font-weight: 800;
@@ -235,9 +280,15 @@ unidadesInfoCSS = `
 	}
 	
 	h6{
-		text-decoration: underline!important; text-decoration-color: #3477c8 !important; font-weight: 800; font-size: 1.1rem;
+		text-decoration: underline!important; 
+		text-decoration-color: #3477c8 !important; 
+		font-weight: 800; 
+		font-size: 1.1rem;
 	} 
-	h6:hover {color: darkblue !important;} 
+	
+	h6:hover {
+		color: darkblue !important;
+	} 
 	
 	.programacao--container .row{
 		display: block !important; 
@@ -326,14 +377,27 @@ function simplifyPageReceiver(request, sender, sendResponse) {
 			pageContent();
 		}
 		
-		if(request.carousel == 'carousel-unidades'){
+		/*if(request.carousel == 'carousel-unidades'){
 			console.log('unidades');
 			appendStyleSheet('unidadesInfoCSS', unidadesInfoCSS);
 			mouseOverItems();
-		}
+		}*/
+	}
+	else if(request.unidades){
+		console.log('unidades');
+		appendStyleSheet('unidadesInfoCSS', unidadesInfoCSS);
+		pageContent();
+		carousel();		
 	}
 	else if(request.unity){
 		mouseOverUnity();
+	}
+	else if(request.searchResults){		
+		pageContent();
+	}
+	else if(request.activity){
+		
+		activity();
 	}
 	else if(request.search){
 		openSearch();	
@@ -347,10 +411,6 @@ function simplifyPageReceiver(request, sender, sendResponse) {
 	}
 	else if(request.listeners){
 		addListeners();
-	}
-	else if(request.activity){
-		
-		activity();
 	}
 	else if(request.fixmenu){
 		
@@ -753,14 +813,14 @@ function openProgramFilter(){
 function menuLinks(){
 	
 	var styles=[];
-	styles.push(".nav-wrapper span, .nav-wrapper a{text-decoration: underline !important; font-weight: 800; font-size: 1.1rem; color: white !important;}");
+	styles.push(".nav-wrapper span, .nav-wrapper a{text-decoration: underline !important; font-weight: 800; font-size: 18px; color: white !important;}");
 
-	styles.push("h6{text-decoration: underline!important; text-decoration-color: #3477c8 !important; font-weight: 800; font-size: 1.1rem;} ");
+	styles.push("h6{text-decoration: underline!important; text-decoration-color: #3477c8 !important; font-weight: 800; font-size: 18px;} ");
 
-	styles.push("#dropdownMenuButton {text-decoration: underline !important; text-decoration-color: white !important; font-weight: 800; font-size: 1.1rem; width: 285px;}");
+	styles.push("#dropdownMenuButton {text-decoration: underline !important; text-decoration-color: white !important; font-weight: 800; font-size: 18px; width: 285px;}");
 	
-	styles.push("a{text-decoration: underline !important; font-weight: 800 !important; font-size: 1.2rem !important; color: #3477C8 !important}");
-	styles.push("a:hover{text-decoration: underline !important; font-weight: 800 !important; font-size: 1.2rem !important; color: darkblue !important}");
+	styles.push("a{text-decoration: underline !important; font-weight: 800 !important; font-size: 18px !important; color: #3477C8 !important}");
+	styles.push("a:hover{text-decoration: underline !important; font-weight: 800 !important; font-size: 18px !important; color: darkblue !important}");
 	/*
 		.fNCgwt {
 			max-height: 433px;
@@ -910,7 +970,7 @@ window.addEventListener("load", myFunction);
 function myFunction(){
 	console.log("asdfadfasf");
 }
-function mouseOverItems(){
+/*function mouseOverItems(){
 	elements = document.getElementsByClassName('programacao--item--container');
 	console.log(elements);
 	if(elements.length > 0){
@@ -925,7 +985,7 @@ function mouseOverItems(){
 		});
 		
 	}		
-}
+}*/
 
 
 

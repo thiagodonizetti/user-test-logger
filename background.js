@@ -69,6 +69,16 @@ function requestModifications(type){
 				fixmenu: "fix"
 			});
 		}
+		else if(type == 'unidades'){
+			browser.tabs.sendMessage(tabs[0].id, {
+				unidades: "change"
+			});
+		}
+		else if(type == 'searchResults'){
+			browser.tabs.sendMessage(tabs[0].id, {
+				searchResults: "change"
+			});
+		}
 		else if(type == 'other'){
 			browser.tabs.sendMessage(tabs[0].id, {
 				other: "all"
@@ -86,11 +96,15 @@ function otherPages(){
 	//requestModifications('carousel-other')
 }
 
+function unidades(){
+	requestModifications('unidades');
+}
+
 function programacao(){
 	//requestModifications('activity');
 	//List activies in single column
 	//Do not change top menu
-	otherPages();
+	requestModifications('searchResults');
 	
 }
 
@@ -98,7 +112,8 @@ function searchResults(){
 	
 	//List activies in single column
 	//Do not change top menu
-	otherPages();
+	//otherPages();
+	requestModifications('searchResults');
 	
 }
 function activity(){
@@ -386,12 +401,12 @@ browser.contextMenus.onClicked.addListener((info, tab) => {
 		
 		if(strokeLength == 0){
 			strokeDuration = straightness = 0;
-			console.log("stroke 0 MDOWN");
+			//console.log("stroke 0 MDOWN");
 		}
 		else{
 			strokeDuration = parseInt(line[2]) - strokeIniTime;
 			straightness  =  Math.sqrt(Math.pow(x1Stroke - xNStroke, 2) + Math.pow(y1Stroke - yNStroke, 2))/strokeLength;	
-			console.log("stroke MDOWN: "+mouseDownTime + "- " + strokeDuration + " - " + strokeDurationSum/strokes );	
+			//console.log("stroke MDOWN: "+mouseDownTime + "- " + strokeDuration + " - " + strokeDurationSum/strokes );	
 		}
 		
 		if(currMoveModel != 0){
@@ -408,10 +423,10 @@ browser.contextMenus.onClicked.addListener((info, tab) => {
 		strokeDurationSum += strokeDuration;
 		strokeLengthSum += strokeLength;
 		straightnessSum += straightness;
-		console.log("stroke antes: "+strokes);	
+		//console.log("stroke antes: "+strokes);	
 		strokes += 1;
 		meanStrokeDuration = (strokeDurationSum/strokes)/1000;
-		console.log("stroke depois: "+strokes);			
+		//console.log("stroke depois: "+strokes);			
 		strokeLength =  strokeIniTime = 0;
 	}
 	
@@ -620,17 +635,25 @@ browser.contextMenus.onClicked.addListener((info, tab) => {
 									console.log('back 3');						
 								}		*/					
 							}
-							else if(m.line[7].includes('/unidades/')){
-								carousel('unidades');
+							else if(m.line[7].includes('/sobre-o-sesc/')){
+								//carousel('unidades');
+								otherPages();//todo trocar para sobre
 								if( backHome == 0 ){
 									backHome = backHome + 1;
 								}
 							}
-							else if(m.line[7].includes('programacao')){
-								activity();
-							}
+							else if(m.line[7].includes('/unidades/')){
+								//carousel('unidades');
+								unidades();
+								if( backHome == 0 ){
+									backHome = backHome + 1;
+								}
+							}							
 							else if(m.line[7].includes('/programacao/?')){
 								programacao();
+							}
+							else if(m.line[7].includes('programacao')){
+								activity();
 							}
 							else if(m.line[7].includes('https://www.sescsp.org.br/?s=')){
 								searchResults();
@@ -683,12 +706,12 @@ browser.contextMenus.onClicked.addListener((info, tab) => {
 								
 								if(strokeLength == 0){
 									strokeDuration = straightness = 0;
-									console.log("stroke 0 PAUSE: "+current_time + "- " + strokeDuration + " - " + strokeDurationSum/strokes );
+									//console.log("stroke 0 PAUSE: "+current_time + "- " + strokeDuration + " - " + strokeDurationSum/strokes );
 								}
 								else{
 									strokeDuration = parseInt(m.line[2]) - strokeIniTime;
 									straightness  =  Math.sqrt(Math.pow(x1Stroke - xNStroke, 2) + Math.pow(y1Stroke - yNStroke, 2))/strokeLength;	
-									console.log("stroke 0 PAUSE 1: "+current_time + "- " + strokeDuration + " - " + strokeDurationSum/strokes );								
+									//console.log("stroke 0 PAUSE 1: "+current_time + "- " + strokeDuration + " - " + strokeDurationSum/strokes );								
 								}
 								
 								strokeDurationSum += strokeDuration;
@@ -699,7 +722,7 @@ browser.contextMenus.onClicked.addListener((info, tab) => {
 								meanStrokeDuration = (strokeDurationSum/strokes) / 1000;
 								meanStrokeLength = (strokeLengthSum/strokes);
 								meanStraightness = straightnessSum/strokes;
-								console.log("stroke 0 PAUSE 2: "+current_time + "- " + strokeDuration + " - " + strokeDurationSum/strokes );		
+								//console.log("stroke 0 PAUSE 2: "+current_time + "- " + strokeDuration + " - " + strokeDurationSum/strokes );		
 								//strokeLength =  strokeIniTime = 0
 								
 								
@@ -2235,12 +2258,12 @@ function teste(){
 						
 						if(strokeLength == 0){
 							strokeDuration = straightness = 0;
-							console.log("stroke 0 PAUSE: "+current_time + "- " + strokeDuration + " - " + strokeDurationSum/strokes );
+							//console.log("stroke 0 PAUSE: "+current_time + "- " + strokeDuration + " - " + strokeDurationSum/strokes );
 						}
 						else{
 							strokeDuration = parseInt(line[2]) - strokeIniTime;
 							straightness  =  Math.sqrt(Math.pow(x1Stroke - xNStroke, 2) + Math.pow(y1Stroke - yNStroke, 2))/strokeLength;	
-							console.log("stroke 0 PAUSE 1: "+current_time + "- " + strokeDuration + " - " + strokeDurationSum/strokes );								
+							//console.log("stroke 0 PAUSE 1: "+current_time + "- " + strokeDuration + " - " + strokeDurationSum/strokes );								
 						}
 						
 						strokeDurationSum += strokeDuration;
@@ -2251,7 +2274,7 @@ function teste(){
 						meanStrokeDuration = (strokeDurationSum/strokes)/1000;
 						meanStrokeLength = (strokeLengthSum/strokes);
 						meanStraightness = straightnessSum/strokes;
-						console.log("stroke 0 PAUSE 2: "+current_time + "- " + strokeDuration + " - " + strokeDurationSum/strokes );		
+						//console.log("stroke 0 PAUSE 2: "+current_time + "- " + strokeDuration + " - " + strokeDurationSum/strokes );		
 						//strokeLength =  strokeIniTime = 0
 						
 						
