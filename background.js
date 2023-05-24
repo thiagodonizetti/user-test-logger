@@ -79,6 +79,21 @@ function requestModifications(type){
 				searchResults: "change"
 			});
 		}
+		else if(type == 'servicos'){
+			browser.tabs.sendMessage(tabs[0].id, {
+				servicos: "change"
+			});
+		}
+		else if(type == 'central'){
+			browser.tabs.sendMessage(tabs[0].id, {
+				central: "change"
+			});
+		}
+		else if(type == 'sobre'){
+			browser.tabs.sendMessage(tabs[0].id, {
+				sobre: "change"
+			});
+		}
 		else if(type == 'other'){
 			browser.tabs.sendMessage(tabs[0].id, {
 				other: "all"
@@ -138,6 +153,16 @@ function carousel(type){
 	requestModifications('carousel-'+type);
 }
 
+function servicos(){
+	requestModifications('servicos');
+}
+
+function central(){
+	requestModifications('central');
+}
+function sobre(){
+	requestModifications('sobre');
+}
 
 function messageTabTest(tabs) {
   browser.tabs.sendMessage(tabs[0].id, {
@@ -637,7 +662,7 @@ browser.contextMenus.onClicked.addListener((info, tab) => {
 							}
 							else if(m.line[7].includes('/sobre-o-sesc/')){
 								//carousel('unidades');
-								otherPages();//todo trocar para sobre
+								sobre();
 								if( backHome == 0 ){
 									backHome = backHome + 1;
 								}
@@ -651,12 +676,33 @@ browser.contextMenus.onClicked.addListener((info, tab) => {
 							}							
 							else if(m.line[7].includes('/programacao/?')){
 								programacao();
+								if( backHome == 0 ){
+									backHome = backHome + 1;
+								}
 							}
 							else if(m.line[7].includes('programacao')){
 								activity();
+								if( backHome == 0 ){
+									backHome = backHome + 1;
+								}
 							}
 							else if(m.line[7].includes('https://www.sescsp.org.br/?s=')){
 								searchResults();
+								if( backHome == 0 ){
+									backHome = backHome + 1;
+								}
+							}
+							else if(m.line[7].includes('portal.sescsp.org.br/')){
+								servicos();
+								if( backHome == 0 ){
+									backHome = backHome + 1;
+								}
+							}
+							else if(m.line[7].includes('centralrelacionamento.sescsp.org.br/')){
+								central();
+								if( backHome == 0 ){
+									backHome = backHome + 1;
+								}
 							}
 							else if(!(m.line[7].includes('moz-extension') && 
 								m.line[7].includes('loggerPopup.html')) ){

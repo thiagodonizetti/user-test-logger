@@ -1,5 +1,5 @@
 /* --------- HOME CSS ---------*/
-
+var reload = true;
 menuFixo = `
 	.nav-menu{
 	  position: fixed !important;
@@ -203,20 +203,96 @@ homeCSS = `
 `;
 
 
-/* serviços */
+/* servicos */
 
-servicos = `
+servicosCSS = `
 	#main_header {
-		position: fixed !import;
-		z-index: 99 !import;
-		background-color: white !import;
+		position: fixed !important;
+		z-index: 99 !important;
+		background-color: white !important;
 	}
 	
 	#content {
 		top: 186px;
+		margin-bottom: 313px;
 	}
-
+	#local_nav ul li a, .block_content_16 p, .block_content_16 p a, #header_section_sesc nav li a {
+		font-size: 14px !important;
+		color: black !important;
+		font-weight: normal !important;
+	}
+	#local_nav ul li a:hover, #header_section_sesc nav li a:hover {
+		
+		color: rgb(52, 119, 200) !important		
+	}
+	
+	#content_estrutura p, #content_estrutura span, .rich_content p {
+		font-size: 18px !important;
+		line-height: normal;
+	}
+		
 `;
+
+/* central de relacionamento */
+centralCSS = `
+	.jss194, .jss210 {
+		min-height: 99px !important;
+		background-size: contain;
+		background-image: none;
+		background-color: #3477c8;
+		position: fixed;
+		z-index: 99;
+		width: 100%;
+	}
+`;
+
+/* ----- Sobre o SESC---*/
+
+sobreCSS = `
+	.video-container {
+		height: 13vh;
+	}
+	.container-video {
+		height: 13% !important;
+		background-color: #3477c8;
+	}
+	
+	[data-component="menu"] {
+		padding: 0px !important;
+		max-width: 468px;
+		left: 25px;
+	}
+	
+	a {     
+		font-size: 20px !important;
+		color: blue !important;
+		text-decoration: underline !important;
+	}
+	
+	.novo-container {
+		margin-right: 250px;
+		right: 10px;
+		float: right;
+		margin-top: 37px;
+	}
+	
+	main{
+		background-color: #3477c8;
+		height: 128px;
+	}
+	.logo{
+		height: 80px;
+		top: 50px;
+		margin-top: 10px;
+		background-color: #3477c8; !important;
+	}
+	.title-section {
+		margin-top: 137px;
+	}
+	
+	
+`;
+
 /*var contentCSS = `
 	h6{
 		text-decoration: underline!important; 
@@ -356,10 +432,10 @@ var atividadeInfo = `
 /* TODO:
 	- Check old functions not being used ------- DONE
 	- Check changes flow for redundant calls
-	- Check changes for how to make 'generic' like apply css changes and listeners according to calls
+	- Check changes for how to make "generic" like apply css changes and listeners according to calls
 	- Check distratores file to implement new changes flow
 	- Separate CSS and functions of different elements/page in different methods/calls
-	- Increase font-size for 'abstract' text in the items (bellow h6)
+	- Increase font-size for "abstract" text in the items (bellow h6)
 	- check filter button glow (dleay)
 	- Test every page 
 */
@@ -369,23 +445,23 @@ function simplifyPageReceiver(request, sender, sendResponse) {
 		eatPage(request.replacement);
 	}
 	else if(request.carousel){
-		console.log('carousel', request.carousel);
+		console.log("carousel", request.carousel);
 		carousel();
-		if(request.carousel == 'carousel-home' || request.carousel ==  'carousel-other'){
+		if(request.carousel == "carousel-home" || request.carousel ==  "carousel-other"){
 			menuLinks();
 			addLabels();
 			pageContent();
 		}
 		
-		/*if(request.carousel == 'carousel-unidades'){
-			console.log('unidades');
-			appendStyleSheet('unidadesInfoCSS', unidadesInfoCSS);
+		/*if(request.carousel == "carousel-unidades"){
+			console.log("unidades");
+			appendStyleSheet("unidadesInfoCSS", unidadesInfoCSS);
 			mouseOverItems();
 		}*/
 	}
 	else if(request.unidades){
-		console.log('unidades');
-		appendStyleSheet('unidadesInfoCSS', unidadesInfoCSS);
+		console.log("unidades");
+		appendStyleSheet("unidadesInfoCSS", unidadesInfoCSS);
 		pageContent();
 		carousel();		
 	}
@@ -416,6 +492,18 @@ function simplifyPageReceiver(request, sender, sendResponse) {
 		
 		appendStyleSheet("menuFixo", menuFixo);
 	}
+	else if(request.servicos){
+		//console.log("req servicos");
+		servicos();
+	}
+	else if(request.central){
+		//console.log("req servicos");
+		central();
+	}
+	else if(request.sobre){
+		//console.log("req servicos");
+		sobre();
+	}
 	else if(request.other){
 		if(request.other == "all"){
 			generalPage();
@@ -438,6 +526,8 @@ browser.runtime.onMessage.addListener(simplifyPageReceiver);
 		- Menu fixo
 		*/
 
+
+
 function generalPage(){
 	//addLabels
 	addLabels();
@@ -459,22 +549,69 @@ function generalPage(){
 }
 
 
+function central(){
+	/*setTimeout(function(){
+		if(document.referrer == "https://www.sescsp.org.br/"){
+			if (!document.querySelector("#centralCSS")) {
+				location.reload();
+				reload = false;
+				document.referrer = "";
+			}
+		}
+	},5000); */
+	
+	appendStyleSheet("centralCSS", centralCSS);
+	generalPage();	
+}
+
+function sobre(){
+	if(document.getElementsByTagName("video").length > 0){
+		document.getElementsByTagName("video")[0].pause();
+		document.getElementsByTagName("video")[0].style.display = "none";
+	}	
+	
+	if(document.getElementsByClassName("logo-white").length > 0){
+		document.getElementsByClassName("logo-white")[0].classList.add("logo-black");
+		document.getElementsByClassName("logo-white")[0].classList.remove("logo-white");
+		
+	}
+	
+	appendStyleSheet("sobreCSS", sobreCSS);
+	generalPage();	
+	
+}
+function servicos(){
+	//console.log("functionm servicos");
+	appendStyleSheet("servicosCSS", servicosCSS);
+	generalPage();
+	img = document.getElementById("main_highlight");
+	if(img != undefined){
+		img.style.display = "none";
+	}
+	img = document.getElementById("destaque");
+	if(img != undefined){
+		img.style.display = "none";
+	}
+	
+}
+
+
 function pageContent(){
-	console.log('xcontent');
+	console.log("xcontent");
 	
-	appendStyleSheet('pageContentCSS', pageContentCSS);
+	appendStyleSheet("pageContentCSS", pageContentCSS);
 	
-	acoes = document.getElementsByClassName('carrossel-acoes');
+	acoes = document.getElementsByClassName("carrossel-acoes");
 	if(acoes.length > 0){
-		acoes[0].parentNode.style.display = 'none';
+		acoes[0].parentNode.style.display = "none";
 	}	
 }
 function carousel(){
 	console.log("carrossel", document.getElementsByClassName("home--destaques"), document.getElementsByClassName("carrossel"));
 	//document.getElementsByClassName("carrossel--itens")[0].remove();
-	//document.getElementsByClassName("carrossel--itens")[0].id = 'carrossel';
+	//document.getElementsByClassName("carrossel--itens")[0].id = "carrossel";
 	if(document.getElementsByClassName("home--destaques").length > 0){
-		document.getElementsByClassName("home--destaques")[0].id = 'carrossel';
+		document.getElementsByClassName("home--destaques")[0].id = "carrossel";
 		document.getElementById("carrossel").style.display = "none";
 	}
 	else{
@@ -490,8 +627,8 @@ function addLabels(){
 	//<span>procurar no site</span>
 	/*margin-left: 94px;
 top: 11px !important;*/
-	console.log('addLabels');
-	//label.addEventListener('click', (event) => {label.classList.add('fade');})
+	console.log("addLabels");
+	//label.addEventListener("click", (event) => {label.classList.add("fade");})
 	
     
     /*var style = document.createElement("style");
@@ -500,35 +637,35 @@ top: 11px !important;*/
 	head.appendChild(createStyleElement(id, content));*/
 	var labelLogo = document.createElement("span");
 	labelLogo.classList.add("labelMenu");
-    labelLogo.id = 'labelLogo';
-	labelLogo.textContent = 'Página inicial';
+    labelLogo.id = "labelLogo";
+	labelLogo.textContent = "Página inicial";
 	
 	var logo = "";
 	
-	console.log('logos');
-	if(document.getElementsByClassName('nav-logo').length > 0){
-		logo  = document.getElementsByClassName('nav-logo')[0];
+	console.log("logos");
+	if(document.getElementsByClassName("nav-logo").length > 0){
+		logo  = document.getElementsByClassName("nav-logo")[0];
 		console.log(logo);
-		labelLogo.style.top = '55px';
+		labelLogo.style.top = "55px";
 	}
-	else if(document.getElementsByClassName('rpl').length > 0){
-		logo  = document.getElementsByClassName('rpl')[0];	
+	else if(document.getElementsByClassName("rpl").length > 0){
+		logo  = document.getElementsByClassName("rpl")[0];	
 		console.log(logo);
-		labelLogo.style.top = '95px';
-		labelLogo.style.left = '0px';
-		labelLogo.style.textIndent = '0';
+		labelLogo.style.top = "95px";
+		labelLogo.style.left = "0px";
+		labelLogo.style.textIndent = "0";
 	}
-	else if(document.getElementsByClassName('jss213').length > 0){
-		logo  = document.getElementsByClassName('jss213')[0];	
+	else if(document.getElementsByClassName("jss213").length > 0){
+		logo  = document.getElementsByClassName("jss213")[0].parentNode;	
 		console.log(logo);
 	}
-	else if(document.getElementsByClassName('logo').length > 0){
-		logo  = document.getElementsByClassName('logo')[0];
+	else if(document.getElementsByClassName("logo").length > 0){
+		logo  = document.getElementsByClassName("logo")[0];
 		console.log(logo);
-		labelLogo.style.top = '74px';
+		labelLogo.style.top = "74px";
 	}
-	else if(document.getElementsByTagName('a').length > 0){
-		logos = document.getElementsByTagName('a');
+	else if(document.getElementsByTagName("a").length > 0){
+		logos = document.getElementsByTagName("a");
 		
 		
 		for(a in logos){
@@ -536,40 +673,42 @@ top: 11px !important;*/
 				logo = logos[a];
 				console.log(logo);
 				labelLogo.style.left = "111px";
+				break;
 			}
 		}		
 	}
 	
 	if(logo != ""){
+		console.log(logo.classList);
 		logo.appendChild(labelLogo);
 		
-		logo.addEventListener('mouseover', (event) => {		
-			labelLogo.classList.remove('fadeLabel');
-			labelLogo.visibility = 'visible'
+		logo.addEventListener("mouseover", (event) => {		
+			document.getElementById("labelLogo").classList.remove("fadeLabel");
+			document.getElementById("labelLogo").visibility = "visible"
 		});
 		
-		logo.addEventListener('mouseout', (event) => {
-			labelLogo.classList.add('fadeLabel');		
+		logo.addEventListener("mouseout", (event) => {
+			document.getElementById("labelLogo").classList.add("fadeLabel");		
 		});
 		
-		logo.addEventListener('click', (event) => {
-			labelLogo.classList.add('fadeLabel');
+		logo.addEventListener("click", (event) => {
+			document.getElementById("labelLogo").classList.add("fadeLabel");
 			
 		});
 		
-		labelLogo.style.visibility = 'visible';
-		//labelLogo.style.top = '55px';
+		document.getElementById("labelLogo").style.visibility = "visible";
+		//labelLogo.style.top = "55px";
 	}
 	
-	/*logos = document.getElementsByClassName('nav-logo');	
+	/*logos = document.getElementsByClassName("nav-logo");	
 	if(logos.length == 0){
-		logos = document.getElementsByClassName('rpl');
+		logos = document.getElementsByClassName("rpl");
 		if(logos.length == 0){
-			logos = document.getElementsByClassName('jss213');
+			logos = document.getElementsByClassName("jss213");
 			if(logos.length == 0){
-				logo = document.getElementsByClassName('logo');
+				logo = document.getElementsByClassName("logo");
 				if(logo.length == 0){
-					logos = document.getElementsByTagName('a');
+					logos = document.getElementsByTagName("a");
 					for(a in logos){
 						if(logos[a].href == "https://www.sescsp.org.br/"){
 							logo = logos[a];
@@ -592,55 +731,55 @@ top: 11px !important;*/
 	}
 	*/
 	
-	//appendStyleSheet('cssBusca', cssBusca);
-	//label.addEventListener('mouseover', (event) => {label.classList.add('fadeLabel');});		
+	//appendStyleSheet("cssBusca", cssBusca);
+	//label.addEventListener("mouseover", (event) => {label.classList.add("fadeLabel");});		
 	
 	
 	
-	console.log('icons');
-	icons = document.getElementsByClassName('sc-bqWxrE');
-	appendStyleSheet('cssBusca', cssBusca);
+	console.log("icons");
+	icons = document.getElementsByClassName("sc-bqWxrE");
+	appendStyleSheet("cssBusca", cssBusca);
 	if(icons.length > 0){
 		console.log(icons);
 		
 		var labelSearch = document.createElement("span");
 		labelSearch.classList.add("labelMenu");
-		labelSearch.id = 'labelBusca';
-		labelSearch.textContent = 'Pesquisar no site';
+		labelSearch.id = "labelBusca";
+		labelSearch.textContent = "Pesquisar no site";
 		icons[0].appendChild(labelSearch);
 		
-		//label.addEventListener('mouseover', (event) => {label.classList.add('fadeLabel');});		
+		//label.addEventListener("mouseover", (event) => {label.classList.add("fadeLabel");});		
 	
-		icons[0].addEventListener('mouseover', (event) => {
-			console.log('search');
-			if(document.getElementsByClassName('sc-fEXmlR koJJbR search-container').length == 0){
-				labelSearch.classList.remove('fadeLabel');
-				labelSearch.visibility = 'visible';
+		icons[0].addEventListener("mouseover", (event) => {
+			console.log("search");
+			if(document.getElementsByClassName("sc-fEXmlR koJJbR search-container").length == 0){
+				labelSearch.classList.remove("fadeLabel");
+				labelSearch.visibility = "visible";
 			}
-			console.log('search 2');
+			console.log("search 2");
 		});
 		
-		icons[0].addEventListener('mouseout', (event) => {
-			labelSearch.classList.add('fadeLabel');
+		icons[0].addEventListener("mouseout", (event) => {
+			labelSearch.classList.add("fadeLabel");
 			
 		});	
 	
 		// Done: Change click listener to input on key press listener to add texto to search button
-		icons[0].addEventListener('click', (event) => {
-			labelSearch.classList.add('fadeLabel');
+		icons[0].addEventListener("click", (event) => {
+			labelSearch.classList.add("fadeLabel");
 			setTimeout(function(){
 				input = document.getElementsByClassName("sc-dIfARi kuAjmt search-input")[0];
 				//console.log(input);
-				input.addEventListener('keydown', (event) => {
+				input.addEventListener("keydown", (event) => {
 					setTimeout(function(){
 					
 						if(event.target.value.length > 2){
-							document.getElementsByClassName('search-button')[0].innerHTML = "<img src=\"https://www.sescsp.org.br//wp-content/plugins/sesc-menu/src/assets/loupe.svg\" alt=\"icone de lupa\" width=\"23\" height=\"18\"> Clique para Pesquisar";
+							document.getElementsByClassName("search-button")[0].innerHTML = "<img src=\"https://www.sescsp.org.br//wp-content/plugins/sesc-menu/src/assets/loupe.svg\" alt=\"icone de lupa\" width=\"23\" height=\"18\"> Clique para Pesquisar";
 						}
 					
 						//else if(event.target.value.length - 1 < 3){
 						else{
-							document.getElementsByClassName('search-button')[0].innerHTML = "<img src=\"https://www.sescsp.org.br//wp-content/plugins/sesc-menu/src/assets/loupe.svg\" alt=\"icone de lupa\" width=\"23\" height=\"18\">";
+							document.getElementsByClassName("search-button")[0].innerHTML = "<img src=\"https://www.sescsp.org.br//wp-content/plugins/sesc-menu/src/assets/loupe.svg\" alt=\"icone de lupa\" width=\"23\" height=\"18\">";
 						}
 					},100); 
 					
@@ -649,43 +788,43 @@ top: 11px !important;*/
 			
 			/*setTimeout(function(){
 				//alert("I am setTimeout");
-				document.getElementsByClassName('search-button')[0].innerHTML = "<img src=\"https://www.sescsp.org.br//wp-content/plugins/sesc-menu/src/assets/loupe.svg\" alt=\"icone de lupa\" width=\"23\" height=\"18\"> Clique para Pesquisar";
+				document.getElementsByClassName("search-button")[0].innerHTML = "<img src=\"https://www.sescsp.org.br//wp-content/plugins/sesc-menu/src/assets/loupe.svg\" alt=\"icone de lupa\" width=\"23\" height=\"18\"> Clique para Pesquisar";
 			},500);   */
 			
 			
 			//console.log("clique");
 			
 		});	
-		labelSearch.style.visibility = 'visible';
+		labelSearch.style.visibility = "visible";
 		
 		var labelPerfil = document.createElement("span");
 		labelPerfil.classList.add("labelMenuPerfil");
-		labelPerfil.id = 'labelPerfil';
-		labelPerfil.textContent = 'Perfil';
+		labelPerfil.id = "labelPerfil";
+		labelPerfil.textContent = "Perfil";
 		icons[1].appendChild(labelPerfil);
-		//appendStyleSheet('cssBusca', cssBusca);
-		//label.addEventListener('mouseover', (event) => {label.classList.add('fadeLabel');});		
+		//appendStyleSheet("cssBusca", cssBusca);
+		//label.addEventListener("mouseover", (event) => {label.classList.add("fadeLabel");});		
 		
-		icons[1].addEventListener('mouseover', (event) => {
-			labelPerfil.classList.remove('fadeLabel');
-			labelPerfil.visibility = 'visible'
+		icons[1].addEventListener("mouseover", (event) => {
+			labelPerfil.classList.remove("fadeLabel");
+			labelPerfil.visibility = "visible"
 		})	
-		icons[1].addEventListener('mouseout', (event) => {
-			labelPerfil.classList.add('fadeLabel');
+		icons[1].addEventListener("mouseout", (event) => {
+			labelPerfil.classList.add("fadeLabel");
 			
 		})	
-		icons[1].addEventListener('click', (event) => {
-			labelPerfil.classList.add('fadeLabel');
+		icons[1].addEventListener("click", (event) => {
+			labelPerfil.classList.add("fadeLabel");
 			
 		})	
-		labelPerfil.style.visibility = 'visible';
+		labelPerfil.style.visibility = "visible";
 		
 	}
 	
 	
 	
 	
-	//document.getElementsByClassName('search-button')[0].text
+	//document.getElementsByClassName("search-button")[0].text
 }
 
 
@@ -694,7 +833,7 @@ function mouseOverUnity(){
 	//Menu unidades:
 	
 	//get unity buttom
-	unidades = document.getElementsByClassName('sc-iJnaPW exFzrr toogle-dropdown');
+	unidades = document.getElementsByClassName("sc-iJnaPW exFzrr toogle-dropdown");
 	//add mouse over/out listener		sc-gikAfH eYAQtw toogle-dropdown
 	if(unidades.length > 0 ){
 		
@@ -707,7 +846,7 @@ function mouseOverUnity(){
 					console.log(document.getElementsByClassName("sc-hBxehG dnsJqu nav-modal"));
 				});
 				
-				bar = document.getElementsByClassName('sc-lllmON dVWbfY nav-item');
+				bar = document.getElementsByClassName("sc-lllmON dVWbfY nav-item");
 				for(i=2; i < bar.length; i++){
 					bar[i].addEventListener("mouseover", (event) => {
 						//close unity
@@ -747,30 +886,30 @@ function mouseOverUnity(){
 		if(document.getElementsByClassName("sc-hBxehG dnsJqu nav-modal").length > 0)
 			a[1].click(); 
 		//added to close other menu
-		document.getElementsByClassName('sc-gikAfH gYIFLn toogle-dropdown')[0].click();
+		document.getElementsByClassName("sc-gikAfH gYIFLn toogle-dropdown")[0].click();
 	});*/
 
 }
 
 
-function openProgramFilter(){
-	//console.log('program');
+function openProgramFilter(){ 
+	//console.log("program");
 	//Menu de programação
-	//document.getElementById('dropdownMenuButton').click();
+	//document.getElementById("dropdownMenuButton").click();
 	
 	
-	button = document.getElementById('dropdownMenuButton');
-	circle = document.getElementById('programCircle')
+	button = document.getElementById("dropdownMenuButton");
+	circle = document.getElementById("programCircle")
 	if(circle){
-		circle.classList.remove('fadeCircle');
-		circle.style.display = 'block';
+		circle.classList.remove("fadeCircle");
+		circle.style.display = "block";
 		//alert("before setTimeout");
 		setTimeout(function(){
 			//alert("I am setTimeout");			
-			circle.classList.add('fadeCircle');
+			circle.classList.add("fadeCircle");
 			setTimeout(function(){
 				//alert("I am setTimeout");
-				circle.style.display = 'none';
+				circle.style.display = "none";
 			},3000); //delay is in milliseconds    
 	   },300); //delay is in milliseconds 
 		
@@ -779,29 +918,29 @@ function openProgramFilter(){
 	else {
 		var circle = document.createElement("circle");
 		circle.classList.add("btnFilter");
-		circle.id = 'programCircle';
-		//circle.style.backgroundColor = 'rgb(203, 208, 214)';//#84a4ca';
-		//circle.style.opacity = '0.6';
-		circle.style.position = 'absolute';
+		circle.id = "programCircle";
+		//circle.style.backgroundColor = "rgb(203, 208, 214)";//#84a4ca";
+		//circle.style.opacity = "0.6";
+		circle.style.position = "absolute";
 		
-		circle.addEventListener('click', (event) => { 
-			document.getElementById('dropdownMenuButton').click();
+		circle.addEventListener("click", (event) => { 
+			document.getElementById("dropdownMenuButton").click();
 		});
 		
 		
 		
-		//labelSearch.textContent = 'Pesquisar no site';
+		//labelSearch.textContent = "Pesquisar no site";
 		button.parentNode.appendChild(circle);
-		appendStyleSheet('programCircleCSS', programCircleCSS)//.then(
+		appendStyleSheet("programCircleCSS", programCircleCSS)//.then(
 		
 		//alert("before setTimeout");
 		setTimeout(function(){
 			//alert("I am setTimeout");
-			circle.classList.add('fadeCircle');
+			circle.classList.add("fadeCircle");
 			
 			setTimeout(function(){
 				//alert("I am setTimeout");
-				circle.style.display = 'none';
+				circle.style.display = "none";
 			},5000); //delay is in milliseconds    
 	   },1000); //delay is in milliseconds 
 	}
@@ -843,14 +982,14 @@ function menuLinks(){
 	}
 	//document.styleSheets[0].insertRule("nav.nav-wrapper span, a{text-decoration: underline;} ", 0);
 	//document.styleSheets[0].insertRule(styles, 0);
-	appendStyleSheet('homeCSS', homeCSS);
+	appendStyleSheet("homeCSS", homeCSS);
 }
 
 /* --------- ACTIVITY Methods ---------*/
 // TODO: ADD Change position of name of unity
 function activity()
 {
-	unidade = document.getElementsByClassName('evento--sessao--local');
+	unidade = document.getElementsByClassName("evento--sessao--local");
 	if(unidade.length > 0){
 		if(unidade[0].children.length > 0)
 		{
@@ -860,16 +999,16 @@ function activity()
 				linkElement.href = unidade[0].children[0].href;
 				linkElement.text = " (Unidade: " + unidade[0].children[0].text +  ")";
 				
-				local = document.getElementsByClassName('evento--sessao--entrada--local');
+				local = document.getElementsByClassName("evento--sessao--entrada--local");
 				if(local.length > 0){
 					local[0].appendChild(linkElement);
-					local[0].classList.add('evento--sessao--local');
+					local[0].classList.add("evento--sessao--local");
 				}
 			}
 		}
 		
 	}
-	appendStyleSheet('atividadeInfo', atividadeInfo);
+	appendStyleSheet("atividadeInfo", atividadeInfo);
 }
 
 
@@ -899,19 +1038,19 @@ function createStyleElement(id, content) {
 
 /*function addListeners(){
 	//window.addEventListener("load", myFunction);
-	console.log('loading');
-	block = document.getElementById('filter-cards-block-container');
+	console.log("loading");
+	block = document.getElementById("filter-cards-block-container");
 	console.log(block);
 	block.addEventListener("onchange", (event) => {
-		console.log('load');
-		//document.querySelector('.programacao--item--container h6').style.color = 'rgb(39, 153, 193)';
+		console.log("load");
+		//document.querySelector(".programacao--item--container h6").style.color = "rgb(39, 153, 193)";
 	});
 	window.addEventListener("load", (event) => {
-		console.log('load');
-		//document.querySelector('.programacao--item--container h6').style.color = 'rgb(39, 153, 193)';
+		console.log("load");
+		//document.querySelector(".programacao--item--container h6").style.color = "rgb(39, 153, 193)";
 	});
 	window.onload = (event) => {
-    console.log('The page has fully loaded');
+    console.log("The page has fully loaded");
 	};
 }*/
 
@@ -922,11 +1061,11 @@ function createStyleElement(id, content) {
 
 /*function eatPage(replacement){
 	/*document.body.textContent = "";
-	let header = document.createElement('h1');
+	let header = document.createElement("h1");
 	header.textContent = "This page has been eaten";
 	document.body.appendChild(header);*/
 	/*document.body.textContent = "";
-	let header = document.createElement('h1');
+	let header = document.createElement("h1");
 	header.textContent = replacement;
 	document.body.appendChild(header);
 }*/
@@ -943,23 +1082,23 @@ function openSearch(){
 
 var unityOpen = false;
 
-/*document.getElementsByClassName('sc-iJnaPW exFzrr toogle-dropdown')[1].onclick = () => {
-  console.log('clicked');
+/*document.getElementsByClassName("sc-iJnaPW exFzrr toogle-dropdown")[1].onclick = () => {
+  console.log("clicked");
   menu = document.getElementsByClassName("sc-hBxehG dnsJqu nav-modal");
   console.log(menu);
 }*/
 
 /*window.addEventListener("scroll", (event) => {  
-	console.log('teste');
-	elements = document.getElementsByClassName('programacao--item--container');
+	console.log("teste");
+	elements = document.getElementsByClassName("programacao--item--container");
 	if(elements.length > 0){
 		elements.forEach(item => {
 			item.addEventListener("mouseover", (event) => {  
-				document.querySelector('.programacao--item--container h6').style.color = 'rgb(39, 153, 193)';
+				document.querySelector(".programacao--item--container h6").style.color = "rgb(39, 153, 193)";
 			});
 		
 			item.addEventListener("mouseout", (event) => {  
-				document.querySelector('.programacao--item--container h6').style.color = '#3477c8'
+				document.querySelector(".programacao--item--container h6").style.color = "#3477c8"
 			});
 		});
 		
@@ -971,16 +1110,16 @@ function myFunction(){
 	console.log("asdfadfasf");
 }
 /*function mouseOverItems(){
-	elements = document.getElementsByClassName('programacao--item--container');
+	elements = document.getElementsByClassName("programacao--item--container");
 	console.log(elements);
 	if(elements.length > 0){
 		elements.forEach(item => {
 			item.addEventListener("mouseover", (event) => {  
-				document.querySelector('.programacao--item--container h6').style.color = 'rgb(39, 153, 193)';
+				document.querySelector(".programacao--item--container h6").style.color = "rgb(39, 153, 193)";
 			});
 		
 			item.addEventListener("mouseout", (event) => {  
-				document.querySelector('.programacao--item--container h6').style.color = '#3477c8'
+				document.querySelector(".programacao--item--container h6").style.color = "#3477c8"
 			});
 		});
 		
