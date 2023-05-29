@@ -94,6 +94,16 @@ function requestModifications(type){
 				sobre: "change"
 			});
 		}
+		else if(type == 'showMoreButton'){
+			browser.tabs.sendMessage(tabs[0].id, {
+				showMoreButton: "show"
+			});
+		}
+		else if(type == 'map'){
+			browser.tabs.sendMessage(tabs[0].id, {
+				map: "map"
+			});
+		}
 		else if(type == 'other'){
 			browser.tabs.sendMessage(tabs[0].id, {
 				other: "all"
@@ -157,11 +167,18 @@ function servicos(){
 	requestModifications('servicos');
 }
 
+function map(){
+	requestModifications('map');
+}
 function central(){
 	requestModifications('central');
 }
 function sobre(){
 	requestModifications('sobre');
+}
+
+function showMoreButtom(){
+	requestModifications('showMoreButton');
 }
 
 function messageTabTest(tabs) {
@@ -594,10 +611,12 @@ browser.contextMenus.onClicked.addListener((info, tab) => {
 				if(m.blob == undefined){
 					if(m.line == 'scroll'){
 						console.log('scroll message');
-						openProgramFilter()
+						openProgramFilter();
 					}
-					else{
-					
+					else if(m.line == 'showmore'){
+						showMoreButtom();
+					}
+					else{					
 						loggerPack.push(m.line);
 						countLines++;
 						
@@ -680,7 +699,7 @@ browser.contextMenus.onClicked.addListener((info, tab) => {
 									backHome = backHome + 1;
 								}
 							}
-							else if(m.line[7].includes('programacao')){
+							else if(m.line[7].includes('/programacao')){
 								activity();
 								if( backHome == 0 ){
 									backHome = backHome + 1;
@@ -700,6 +719,12 @@ browser.contextMenus.onClicked.addListener((info, tab) => {
 							}
 							else if(m.line[7].includes('centralrelacionamento.sescsp.org.br/')){
 								central();
+								if( backHome == 0 ){
+									backHome = backHome + 1;
+								}
+							}
+							else if(m.line[7].includes('www.google.com/maps/')){
+								map();
 								if( backHome == 0 ){
 									backHome = backHome + 1;
 								}

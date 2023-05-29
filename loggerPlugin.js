@@ -190,12 +190,38 @@ function getScrollDirections(){
 	if (st > lastScrollTop) {
 		// downscroll code
 		scrollDown = scrollDown + 1;
-		console.log(st, document.getElementsByClassName('row programacao--row js-programacao-container')[0].offsetHeight);
-		console.log(document.URL);
+		//console.log(st, document.getElementsByClassName('row programacao--row js-programacao-container')[0].offsetHeight);
+		//console.log(document.URL);
+		
+		button = document.getElementById("more_posts");
+		
+		if(button){
+			console.log("in", window.innerHeight, button.getBoundingClientRect().bottom);
+			
+			
+			if(button.getBoundingClientRect().bottom <  window.innerHeight && button.getBoundingClientRect().bottom > 100)
+			{
+				console.log("VER MAIS");
+				methods.sendLine('showmore');
+			}
+		}
+		console.log("out");
+		
+		
 		//Todo: send button highlight to ver mais when the button appears (offsetHeight); unidades
 		//console.log("down scroll");
 	} else if (st < lastScrollTop) {
 		 console.log('scrollD', scrollDown);
+		 button = document.getElementById("more_posts");
+		 if(button){
+			console.log("in", window.innerHeight, button.getBoundingClientRect().bottom);		
+			if(button.getBoundingClientRect().bottom <  window.innerHeight && button.getBoundingClientRect().bottom > 100)
+			{
+				console.log("VER MAIS");
+				methods.sendLine('showmore');
+			}
+		}
+		 
 		// upscroll code
 		if(scrollDown > 50 && st < 53){
 			console.log('top');

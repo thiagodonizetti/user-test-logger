@@ -109,6 +109,41 @@ programCircleCSS = `
 		opacity: 0.7;	
 		margin: 13px;
 	}
+	
+	circle.carregarMais{
+		background-color: rgb(7, 248, 218) !important;
+		/*position: absolute;*/
+		/*transform: scale(0.0);*/
+		/*opacity: 0.7;	*/
+		/*margin: 13px;*/
+		opacity: 0.7;
+		transform: scale(0.0);
+		text-align: right !important;
+		position: relative !important;
+		padding-bottom: 34px !important;
+		cursor: pointer !important;
+	
+		margin: 0 !important;
+		float: right !important;
+		top: -96px !important;
+		right: 7px !important;
+
+		width: 94px !important;
+		max-height: 10px !important;
+		border-radius: 50px !important;
+	}
+	
+	circle#routeCircle{
+		/*background-color: rgb(7, 248, 218) !important;*/
+		background-color: rgb(248, 220, 7) !important;
+		opacity: 0.8;
+		transform: scale(0.0);
+		cursor: pointer !important;
+		top: -65px !important;
+		left: 12px;
+		display: block !important; 
+	}
+		
 `;
 	
 cssBusca = `
@@ -432,11 +467,11 @@ var atividadeInfo = `
 /* TODO:
 	- Check old functions not being used ------- DONE
 	- Check changes flow for redundant calls
-	- Check changes for how to make "generic" like apply css changes and listeners according to calls
+	- Check changes for how to make "generic" like apply css changes and listeners according to calls 
 	- Check distratores file to implement new changes flow
 	- Separate CSS and functions of different elements/page in different methods/calls
-	- Increase font-size for "abstract" text in the items (bellow h6)
-	- check filter button glow (dleay)
+	- Increase font-size for "abstract" text in the items (bellow h6) ------- DONE
+	- check filter button glow (dleay) ------- DONE
 	- Test every page 
 */
 function simplifyPageReceiver(request, sender, sendResponse) {
@@ -464,6 +499,7 @@ function simplifyPageReceiver(request, sender, sendResponse) {
 		appendStyleSheet("unidadesInfoCSS", unidadesInfoCSS);
 		pageContent();
 		carousel();		
+		changeSearch();
 	}
 	else if(request.unity){
 		mouseOverUnity();
@@ -504,6 +540,12 @@ function simplifyPageReceiver(request, sender, sendResponse) {
 		//console.log("req servicos");
 		sobre();
 	}
+	else if(request.showMoreButton){
+		showMoreButton();
+	}
+	else if(request.map){
+		map();
+	}
 	else if(request.other){
 		if(request.other == "all"){
 			generalPage();
@@ -527,7 +569,160 @@ browser.runtime.onMessage.addListener(simplifyPageReceiver);
 		*/
 
 
+function map(){
+	window.addEventListener('mousedown', function () {
+		console.log('location changed!', document.URL);
+		if(document.URL.includes("/maps/place/")){
+			console.log("rotas");	
+			map();			
+		}
+		setTimeout(function(){
+				console.log('location!', document.URL);
+				if(document.URL.includes("/maps/place/")){
+					console.log("rotas");		
+					map();
+				}
+			}, 2000);
+	});
+	button = document.getElementsByClassName("g88MCb S9kvJb ");
+	if(button.length > 0){
+		appendStyleSheet("mapCSS", mapCSS)
+		button = button[0];
+		circle = document.getElementById("routeCircle")
+		if(circle){
+			if(circle.style.display == "none")
+			{
+				circle.classList.remove("fadeCircle");
+				circle.style.display = "block";
+				//alert("before setTimeout");
+				setTimeout(function(){
+					//alert("I am setTimeout");			
+					circle.classList.add("fadeCircle");
+					setTimeout(function(){
+						//alert("I am setTimeout");
+						circle.style.display = "none";
+					},3000); //delay is in milliseconds    
+			   },100); //delay is in milliseconds 
+			}
+			
+			
+		}
+		else {
+			var circle = document.createElement("circle");
+			circle.classList.add("DVeyrd");
+			circle.id = "routeCircle";
+			//circle.style.backgroundColor = "rgb(203, 208, 214)";//#84a4ca";
+			//circle.style.opacity = "0.6";
+			//circle.style.position = "absolute";
+			circle.style.top = "-65px";
+			
+			circle.addEventListener("click", (event) => { 
+				document.getElementsByClassName("g88MCb S9kvJb ")[0].click();
+			});
+			
+			
+			
+			//labelSearch.textContent = "Pesquisar no site";
+			button.appendChild(circle);
+			appendStyleSheet("programCircleCSS", programCircleCSS)//.then(
+			circle.style.display = "block";
+			//alert("before setTimeout");
+			setTimeout(function(){
+				//alert("I am setTimeout");
+				circle.classList.add("fadeCircle");
+				
+				setTimeout(function(){
+					//alert("I am setTimeout");
+					circle.style.display = "none";
+				},3000); //delay is in milliseconds    
+		   },100); //delay is in milliseconds 
+		}
+		
+		button.addEventListener("click", (event) => {
+			if(!document.getElementById("labelAdress")){
+				
+				let header = document.createElement("span");
+				header.classList.add("labelAdress");
+				header.id = "labelAdress";
+				header.textContent = "Clique aqui se deseja digitar um novo endereço de partida";
+				document.body.appendChild(header);
+			}
+			else {
+				document.getElementById("labelAdress").style.display = "block";
+			}
+			//console.log("");
+			local = document.getElementById("sbse14");
+			if(local){
+				//local.click();
+				console.log("");
+			}
+			
+		
+			setTimeout(function(){
+				input = document.getElementById("directions-searchbox-0");
+				//console.log(input);
+				if(input){
+					console.log("input");
+					//input = input[0];
+					input.addEventListener("mouseover", (event) => {
+						label = document.getElementById("labelAdress");
+						if(label)
+						{
+							//console.log("mouseover");
+							label.style.display = "block";
+						}
+					});
+					input.addEventListener("mouseout", (event) => {
+						label = document.getElementById("labelAdress");
+						if(label)
+						{ 
+							//console.log("mosueout");
+							label.style.display = "none";
+						}
+					});
+				}
+			},3000); 
+		});
+		   
+		//alert("after setTimeout");	
+		
+	}
+	
+	/*let header = document.createElement("span");
+	header.textContent = "Clique para digitar um novo endereço de partida";
+	document.body.appendChild(header);*/
+	
+}
 
+mapCSS = `
+	.labelAdress {
+		position: relative;
+		top: 31px;
+		left: 152px;
+		background-color: lightyellow;
+		padding: 5px 12px;
+		margin: 10px;
+		position: absolute;
+		border: 1px solid black;
+		border-radius: 13px;
+	}
+	
+	.labelRouteCSS {
+		position: relative;
+		top: 362px;
+		left: 450px;
+		background-color: lightyellow;
+		padding: 5px 12px;
+		margin: 10px;
+		position: absolute;
+		border: 1px solid black;
+		border-radius: 13px;
+		
+	}
+
+}
+
+`;
 function generalPage(){
 	//addLabels
 	addLabels();
@@ -621,6 +816,43 @@ function carousel(){
 	}
 }
 
+
+function changeSearch(){
+	icons = document.getElementsByClassName("sc-bqWxrE");
+	appendStyleSheet("cssBusca", cssBusca);
+	if(icons.length > 0){
+		icons[0].addEventListener("click", (event) => {
+			//labelSearch.classList.add("fadeLabel");
+			setTimeout(function(){
+				input = document.getElementsByClassName("sc-dIfARi kuAjmt search-input")[0];
+				//console.log(input);
+				input.addEventListener("keydown", (event) => {
+					setTimeout(function(){
+					
+						if(event.target.value.length > 2){
+							document.getElementsByClassName("search-button")[0].innerHTML = "<img src=\"https://www.sescsp.org.br//wp-content/plugins/sesc-menu/src/assets/loupe.svg\" alt=\"icone de lupa\" width=\"23\" height=\"18\"> Clique para Pesquisar";
+						}
+					
+						//else if(event.target.value.length - 1 < 3){
+						else{
+							document.getElementsByClassName("search-button")[0].innerHTML = "<img src=\"https://www.sescsp.org.br//wp-content/plugins/sesc-menu/src/assets/loupe.svg\" alt=\"icone de lupa\" width=\"23\" height=\"18\">";
+						}
+					},100); 
+					
+				});
+			},500); 
+			
+			/*setTimeout(function(){
+				//alert("I am setTimeout");
+				document.getElementsByClassName("search-button")[0].innerHTML = "<img src=\"https://www.sescsp.org.br//wp-content/plugins/sesc-menu/src/assets/loupe.svg\" alt=\"icone de lupa\" width=\"23\" height=\"18\"> Clique para Pesquisar";
+			},500);   */
+			
+			
+			//console.log("clique");
+			
+		});	
+	}
+}
 
 function addLabels(){	
 	
@@ -890,7 +1122,68 @@ function mouseOverUnity(){
 	});*/
 
 }
-
+function showMoreButton(){ 
+	//console.log("program");
+	//Menu de programação
+	//document.getElementById("dropdownMenuButton").click();
+	
+	
+	button = document.getElementById("more_posts");
+	if(button){
+		circle = document.getElementById("moreCircle")
+		if(circle){
+			if(circle.style.display == "none")
+			{
+				circle.classList.remove("fadeCircle");
+				circle.style.display = "block";
+				//alert("before setTimeout");
+				setTimeout(function(){
+					//alert("I am setTimeout");			
+					circle.classList.add("fadeCircle");
+					setTimeout(function(){
+						//alert("I am setTimeout");
+						circle.style.display = "none";
+					},3000); //delay is in milliseconds    
+			   },100); //delay is in milliseconds 
+			}
+			
+			
+		}
+		else {
+			var circle = document.createElement("circle");
+			circle.classList.add("carregarMais");
+			circle.id = "moreCircle";
+			//circle.style.backgroundColor = "rgb(203, 208, 214)";//#84a4ca";
+			//circle.style.opacity = "0.6";
+			circle.style.position = "absolute";
+			
+			circle.addEventListener("click", (event) => { 
+				document.getElementById("more_posts").click();
+			});
+			
+			
+			
+			//labelSearch.textContent = "Pesquisar no site";
+			button.parentNode.appendChild(circle);
+			appendStyleSheet("programCircleCSS", programCircleCSS)//.then(
+			circle.style.display = "block";
+			//alert("before setTimeout");
+			setTimeout(function(){
+				//alert("I am setTimeout");
+				circle.classList.add("fadeCircle");
+				
+				setTimeout(function(){
+					//alert("I am setTimeout");
+					circle.style.display = "none";
+				},3000); //delay is in milliseconds    
+		   },100); //delay is in milliseconds 
+		}
+		   
+		//alert("after setTimeout");	
+		
+	}
+	
+}
 
 function openProgramFilter(){ 
 	//console.log("program");
@@ -986,7 +1279,7 @@ function menuLinks(){
 }
 
 /* --------- ACTIVITY Methods ---------*/
-// TODO: ADD Change position of name of unity
+// TODO: ADD Change position of name of unity ------- DONE
 function activity()
 {
 	unidade = document.getElementsByClassName("evento--sessao--local");
@@ -1009,6 +1302,7 @@ function activity()
 		
 	}
 	appendStyleSheet("atividadeInfo", atividadeInfo);
+	changeSearch();
 }
 
 
