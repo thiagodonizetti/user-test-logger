@@ -193,38 +193,67 @@ function getScrollDirections(){
 		//console.log(st, document.getElementsByClassName('row programacao--row js-programacao-container')[0].offsetHeight);
 		//console.log(document.URL);
 		
-		button = document.getElementById("more_posts");
-		
-		if(button){
-			console.log("in", window.innerHeight, button.getBoundingClientRect().bottom);
+		//button = document.getElementById("more_posts");
+		 button = document.getElementsByClassName("carregar--mais");
+		 //console.log(button);
+		 if(button.length > 0){
+			if(button.length == 1){
+				button = button[0];
+			}
+			else if(button.length == 2){
+				button = button[0];
+			}
+			else if(button.length == 4){
+				button = button[1];
+			}
+			else{
+				button = button[0];
+			}
+			//console.log("in", window.innerHeight, button.getBoundingClientRect().bottom);
 			
 			
 			if(button.getBoundingClientRect().bottom <  window.innerHeight && button.getBoundingClientRect().bottom > 100)
 			{
-				console.log("VER MAIS");
+				//console.log("VER MAIS");
 				methods.sendLine('showmore');
 			}
 		}
-		console.log("out");
+		//console.log("out");
 		
 		
 		//Todo: send button highlight to ver mais when the button appears (offsetHeight); unidades
 		//console.log("down scroll");
 	} else if (st < lastScrollTop) {
-		 console.log('scrollD', scrollDown);
-		 button = document.getElementById("more_posts");
-		 if(button){
-			console.log("in", window.innerHeight, button.getBoundingClientRect().bottom);		
+		 //console.log('scrollD', scrollDown);
+		 //button = document.getElementById("more_posts");
+		 button = document.getElementsByClassName("carregar--mais");
+		 //console.log(button);
+		 if(button.length > 0){
+			
+			if(button.length == 1){
+				button = button[0];
+			}
+			else if(button.length == 2){
+				button = button[0];
+			}
+			else if(button.length == 4){
+				button = button[1];
+			}
+			else{
+				button = button[0];
+			}
+			
+			//console.log("in", window.innerHeight, button.getBoundingClientRect().bottom);		
 			if(button.getBoundingClientRect().bottom <  window.innerHeight && button.getBoundingClientRect().bottom > 100)
 			{
-				console.log("VER MAIS");
+				//console.log("VER MAIS");
 				methods.sendLine('showmore');
 			}
 		}
 		 
 		// upscroll code
 		if(scrollDown > 50 && st < 53){
-			console.log('top');
+			//console.log('top');
 			scrollDown = 0;
 			if( document.URL == "https://www.sescsp.org.br/")
 				methods.sendLine('scroll');
@@ -234,7 +263,7 @@ function getScrollDirections(){
 		//console.log('up scroll');
 	} 
 	else{
-		console.log(lastScrollTop, st);
+		//console.log(lastScrollTop, st);
 	}// else was horizontal scroll
 	lastScrollTop = st <= 0 ? 0 : st; // For Mobile or negative scrolling
 

@@ -24,10 +24,10 @@ function requestModifications(type){
 	
 	
 	getActiveTab().then((tabs) => {
-		console.log(tabs);
+		//console.log(tabs);
 		
 		if(type == 'carousel-home' || type == 'carousel-unidades' ||  type == 'carousel-other'){
-			console.log('carousel');
+			//console.log('carousel');
 			browser.tabs.sendMessage(tabs[0].id, {
 				carousel: type
 			});			
@@ -38,7 +38,7 @@ function requestModifications(type){
 			});
 		}
 		else if(type == 'program'){
-			console.log('program');
+			//console.log('program');
 			browser.tabs.sendMessage(tabs[0].id, {
 				program: "enable"
 			});
@@ -49,7 +49,7 @@ function requestModifications(type){
 			});
 		}
 		else if(type == 'menulinks'){
-			console.log('other');
+			//console.log('other');
 			browser.tabs.sendMessage(tabs[0].id, {
 				menulinks: "change"
 			});
@@ -149,7 +149,7 @@ function openSeach(){
 	requestModifications('search');
 }
 function openProgramFilter(){
-	console.log('program');
+	//console.log('program');
 	requestModifications('program');
 }
 function mouseOverUnity(){
@@ -347,7 +347,7 @@ browser.contextMenus.onClicked.addListener((info, tab) => {
 	
 	var metricsTimeOut = {
 		timeOut: function(aMessage) {
-			console.log(aMessage);
+			//console.log(aMessage);
 			//reset time
 			delete this.timeoutID;
 			this.cancelar();
@@ -361,7 +361,7 @@ browser.contextMenus.onClicked.addListener((info, tab) => {
 			
 			//calc taskTotalTime (end - ini)/1000
 			taskTotalTime = (taskEndTime - taskIniTime)/1000;	// div 1000 to miliseconds	
-			console.log("*************** metricsTimeOut");
+			//console.log("*************** metricsTimeOut");
 			if(loggerPack.length > 0)
 				writeLine(loggerPack);
 			
@@ -373,7 +373,7 @@ browser.contextMenus.onClicked.addListener((info, tab) => {
 			if (typeof this.timeoutID === 'number') {
 				this.cancelar();
 			}
-			console.log("TIMEOUT");
+			//console.log("TIMEOUT");
 
 			this.timeoutID = window.setTimeout(function(msg) {
 				this.timeOut(msg);
@@ -425,7 +425,7 @@ browser.contextMenus.onClicked.addListener((info, tab) => {
 			velKey = keysNumber / (time / 60000);
 		}
 			
-		console.log("Tempo, numero, vel ", time, keysNumber, velKey, intervalNumber+1, totalKeysNumber + keysNumber);
+		//console.log("Tempo, numero, vel ", time, keysNumber, velKey, intervalNumber+1, totalKeysNumber + keysNumber);
 		
 		velTotal += velKey;
 		keysTotalTime += time;
@@ -610,7 +610,7 @@ browser.contextMenus.onClicked.addListener((info, tab) => {
 			portsFromCS[currentPort].onMessage.addListener(function(m) {
 				if(m.blob == undefined){
 					if(m.line == 'scroll'){
-						console.log('scroll message');
+						//console.log('scroll message');
 						openProgramFilter();
 					}
 					else if(m.line == 'showmore'){
@@ -655,7 +655,7 @@ browser.contextMenus.onClicked.addListener((info, tab) => {
 						//simplification home:
 						else if(m.line[3] == "pageview"){
 							//sendListeners();
-							console.log(m.line[7]);
+							//console.log(m.line[7]);
 							//url = m.line[7].split("|")
 							if(m.line[7].split("|")[0] == "https://www.sescsp.org.br/"){
 								if(backHome > 0){

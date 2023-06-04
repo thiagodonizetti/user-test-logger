@@ -16,6 +16,13 @@ pageContentCSS = `
 		/*padding: 0 5px !important;*/
 	}
 	
+	div.sc-ipEyDJ, div.bizcQG, div.nav-content{
+		/*max-width: 1092px !important;*/
+		max-width: 1186px;
+		padding: 0 8px;
+		/*padding: 0 5px !important;*/
+	}
+	
 	h6{
 		text-decoration: underline!important; 
 		text-decoration-color: #3477c8 !important; 
@@ -126,9 +133,9 @@ programCircleCSS = `
 		margin: 0 !important;
 		float: right !important;
 		top: -96px !important;
-		right: 7px !important;
+		right: 0px !important;
 
-		width: 94px !important;
+		/*width: 162px  !important;*/
 		max-height: 10px !important;
 		border-radius: 50px !important;
 	}
@@ -209,6 +216,22 @@ cssBusca = `
 `;
 
 homeCSS = `
+	ul.sc-cCjUiG, ul.eUCgxt, ul.unit-wrapper{
+		max-height: 415px !important;
+	}
+	
+	.sc-hhOBVt, .iIsGzG, .unit-group{
+		max-height: 460px !important;
+	}
+	
+	div.sc-kMjNwy, div.kJIbKw,  div.units-container{
+		min-height: 460px !important;
+	}
+	
+	section.sc-hBxehG, section.cWaHKM, section.nav-modal{
+		min-height: 515px !important;
+	}
+	
 	.fNCgwt {
 		max-height: 433px;
 	}
@@ -480,7 +503,7 @@ function simplifyPageReceiver(request, sender, sendResponse) {
 		eatPage(request.replacement);
 	}
 	else if(request.carousel){
-		console.log("carousel", request.carousel);
+		//console.log("carousel", request.carousel);
 		carousel();
 		if(request.carousel == "carousel-home" || request.carousel ==  "carousel-other"){
 			menuLinks();
@@ -495,7 +518,7 @@ function simplifyPageReceiver(request, sender, sendResponse) {
 		}*/
 	}
 	else if(request.unidades){
-		console.log("unidades");
+		//console.log("unidades");
 		appendStyleSheet("unidadesInfoCSS", unidadesInfoCSS);
 		pageContent();
 		carousel();		
@@ -560,26 +583,26 @@ browser.runtime.onMessage.addListener(simplifyPageReceiver);
 
 /*- Geral
 		- Labels no menu E no logo		
-		- Mouseover menu unidades
+		- Mouseover menu unidades************
 		- Destaque nos links (todos da pagina com underline) e cor #1797f5
 		- Conteúdo em 1 coluna
 		- Remover Carrossel
-		- botao de busca melhorado
+		- botao de busca melhorado**********
 		- Menu fixo
 		*/
 
 
 function map(){
 	window.addEventListener('mousedown', function () {
-		console.log('location changed!', document.URL);
+		//console.log('location changed!', document.URL);
 		if(document.URL.includes("/maps/place/")){
-			console.log("rotas");	
+			//console.log("rotas");	
 			map();			
 		}
 		setTimeout(function(){
-				console.log('location!', document.URL);
+				//console.log('location!', document.URL);
 				if(document.URL.includes("/maps/place/")){
-					console.log("rotas");		
+					//console.log("rotas");		
 					map();
 				}
 			}, 2000);
@@ -616,6 +639,13 @@ function map(){
 			//circle.style.position = "absolute";
 			circle.style.top = "-65px";
 			
+			var label = document.createElement("span");
+			label.classList.add("labelRoutesBtn")
+			label.id = "labelRouteButton";
+			label.textContent = "Ver Rotas";
+			
+			
+			
 			circle.addEventListener("click", (event) => { 
 				document.getElementsByClassName("g88MCb S9kvJb ")[0].click();
 			});
@@ -624,12 +654,20 @@ function map(){
 			
 			//labelSearch.textContent = "Pesquisar no site";
 			button.appendChild(circle);
+			
 			appendStyleSheet("programCircleCSS", programCircleCSS)//.then(
 			circle.style.display = "block";
 			//alert("before setTimeout");
 			setTimeout(function(){
 				//alert("I am setTimeout");
 				circle.classList.add("fadeCircle");
+				button.appendChild(label);
+				button.addEventListener("mouseover", (event) => {
+					label.style.display = "block";
+				});
+				button.addEventListener("mouseout", (event) => {
+					label.style.display = "none";
+				});
 				
 				setTimeout(function(){
 					//alert("I am setTimeout");
@@ -639,6 +677,7 @@ function map(){
 		}
 		
 		button.addEventListener("click", (event) => {
+			//console.log("rotas click");
 			if(!document.getElementById("labelAdress")){
 				
 				let header = document.createElement("span");
@@ -651,18 +690,21 @@ function map(){
 				document.getElementById("labelAdress").style.display = "block";
 			}
 			//console.log("");
-			local = document.getElementById("sbse14");
-			if(local){
-				//local.click();
-				console.log("");
+			local = document.getElementsByClassName("sbsb_c");//document.getElementById("sbse14");
+			//console.log(local);
+			if(local.length > 0){
+				local[0].childNodes[0].click();
+				//console.log("local");
 			}
+			
+			
 			
 		
 			setTimeout(function(){
 				input = document.getElementById("directions-searchbox-0");
 				//console.log(input);
 				if(input){
-					console.log("input");
+					//console.log("input");
 					//input = input[0];
 					input.addEventListener("mouseover", (event) => {
 						label = document.getElementById("labelAdress");
@@ -681,7 +723,12 @@ function map(){
 						}
 					});
 				}
-			},3000); 
+				
+				
+			
+				addRoutesLabel();
+			
+			},2000); 
 		});
 		   
 		//alert("after setTimeout");	
@@ -692,6 +739,71 @@ function map(){
 	header.textContent = "Clique para digitar um novo endereço de partida";
 	document.body.appendChild(header);*/
 	
+}
+
+function addRoutesLabel(){
+	console.log("routes label");
+	var routes = document.getElementsByClassName("m6QErb");
+	console.log(routes);
+	if(routes.length > 0){
+		
+		routesLabel = document.getElementById("routesLabel");
+		if(!routesLabel){
+			
+			var routesLabel = document.createElement("span");
+			routesLabel.classList.add("labelRoutesBtn")
+			routesLabel.id = "routesLabel";
+			routesLabel.textContent = "Opções de rotas. Clique para ver detalhes.";
+			routesLabel.style.top = "303px";
+			
+			
+			var index = 0;
+			for(i = 0; i < routes.length; i++){
+				//console.log(routes[i]);
+				if(routes[i].childNodes.length > 0){
+					//console.log(routes[i].childNodes[0]);
+					if(routes[i].childNodes[0].id.includes("trip")){
+						//console.log(routes[i].childNodes[0].id)
+						index = i;							
+					}
+				}
+				
+			}
+			rtLabel = document.getElementById("routesLabel");
+			if(!rtLabel)
+				routes[index].appendChild(routesLabel);
+			
+			routes[index].addEventListener("mouseover", (event) => {
+				routesLabel.style.display = "block";
+			});
+			
+			routes[index].addEventListener("mouseout", (event) => {
+				routesLabel.style.display = "none";
+			});
+			
+			routes[index].addEventListener("click", (event) => {
+				document.getElementById("labelAdress").style.display = "none";
+				console.log("direction");
+				setTimeout(function(){
+					
+					document.getElementsByClassName("ysKsp")[0].addEventListener("click", (event) => {
+						setTimeout(function(){
+							console.log("volta");						
+							addRoutesLabel();
+							if(document.getElementById("labelAdress")){
+								document.getElementById("labelAdress").style.display = "block";
+							}
+						},1000);
+					});
+				}, 2000);
+			});
+		}
+		else{
+			routesLabel.style.display = "block";
+		}
+		
+		
+	}	
 }
 
 mapCSS = `
@@ -718,6 +830,17 @@ mapCSS = `
 		border: 1px solid black;
 		border-radius: 13px;
 		
+	}
+	.labelRoutesBtn {
+		position: relative;
+		top: 355px;
+		left: -8px;
+		background-color: lightyellow;
+		padding: 5px 12px;
+		margin: 10px;
+		position: absolute;
+		border: 1px solid black;
+		border-radius: 13px;
 	}
 
 }
@@ -792,7 +915,7 @@ function servicos(){
 
 
 function pageContent(){
-	console.log("xcontent");
+	//console.log("xcontent");
 	
 	appendStyleSheet("pageContentCSS", pageContentCSS);
 	
@@ -802,7 +925,7 @@ function pageContent(){
 	}	
 }
 function carousel(){
-	console.log("carrossel", document.getElementsByClassName("home--destaques"), document.getElementsByClassName("carrossel"));
+	//console.log("carrossel", document.getElementsByClassName("home--destaques"), document.getElementsByClassName("carrossel"));
 	//document.getElementsByClassName("carrossel--itens")[0].remove();
 	//document.getElementsByClassName("carrossel--itens")[0].id = "carrossel";
 	if(document.getElementsByClassName("home--destaques").length > 0){
@@ -824,7 +947,8 @@ function changeSearch(){
 		icons[0].addEventListener("click", (event) => {
 			//labelSearch.classList.add("fadeLabel");
 			setTimeout(function(){
-				input = document.getElementsByClassName("sc-dIfARi kuAjmt search-input")[0];
+				input = document.getElementsByClassName("search-input")[0];
+				
 				//console.log(input);
 				input.addEventListener("keydown", (event) => {
 					setTimeout(function(){
@@ -859,7 +983,7 @@ function addLabels(){
 	//<span>procurar no site</span>
 	/*margin-left: 94px;
 top: 11px !important;*/
-	console.log("addLabels");
+	//console.log("addLabels");
 	//label.addEventListener("click", (event) => {label.classList.add("fade");})
 	
     
@@ -874,26 +998,26 @@ top: 11px !important;*/
 	
 	var logo = "";
 	
-	console.log("logos");
+	//console.log("logos");
 	if(document.getElementsByClassName("nav-logo").length > 0){
 		logo  = document.getElementsByClassName("nav-logo")[0];
-		console.log(logo);
+		//console.log(logo);
 		labelLogo.style.top = "55px";
 	}
 	else if(document.getElementsByClassName("rpl").length > 0){
 		logo  = document.getElementsByClassName("rpl")[0];	
-		console.log(logo);
+		//console.log(logo);
 		labelLogo.style.top = "95px";
 		labelLogo.style.left = "0px";
 		labelLogo.style.textIndent = "0";
 	}
 	else if(document.getElementsByClassName("jss213").length > 0){
 		logo  = document.getElementsByClassName("jss213")[0].parentNode;	
-		console.log(logo);
+		//console.log(logo);
 	}
 	else if(document.getElementsByClassName("logo").length > 0){
 		logo  = document.getElementsByClassName("logo")[0];
-		console.log(logo);
+		//console.log(logo);
 		labelLogo.style.top = "74px";
 	}
 	else if(document.getElementsByTagName("a").length > 0){
@@ -903,7 +1027,7 @@ top: 11px !important;*/
 		for(a in logos){
 			if(logos[a].href == "https://www.sescsp.org.br/"){
 				logo = logos[a];
-				console.log(logo);
+				//console.log(logo);
 				labelLogo.style.left = "111px";
 				break;
 			}
@@ -911,7 +1035,7 @@ top: 11px !important;*/
 	}
 	
 	if(logo != ""){
-		console.log(logo.classList);
+		//console.log(logo.classList);
 		logo.appendChild(labelLogo);
 		
 		logo.addEventListener("mouseover", (event) => {		
@@ -968,11 +1092,11 @@ top: 11px !important;*/
 	
 	
 	
-	console.log("icons");
+	//console.log("icons");
 	icons = document.getElementsByClassName("sc-bqWxrE");
 	appendStyleSheet("cssBusca", cssBusca);
 	if(icons.length > 0){
-		console.log(icons);
+		//console.log(icons);
 		
 		var labelSearch = document.createElement("span");
 		labelSearch.classList.add("labelMenu");
@@ -983,12 +1107,12 @@ top: 11px !important;*/
 		//label.addEventListener("mouseover", (event) => {label.classList.add("fadeLabel");});		
 	
 		icons[0].addEventListener("mouseover", (event) => {
-			console.log("search");
-			if(document.getElementsByClassName("sc-fEXmlR koJJbR search-container").length == 0){
+			//console.log("search");
+			if(document.getElementsByClassName("sc-fEXmlR search-container").length == 0){
 				labelSearch.classList.remove("fadeLabel");
 				labelSearch.visibility = "visible";
 			}
-			console.log("search 2");
+			//console.log("search 2");
 		});
 		
 		icons[0].addEventListener("mouseout", (event) => {
@@ -1000,7 +1124,7 @@ top: 11px !important;*/
 		icons[0].addEventListener("click", (event) => {
 			labelSearch.classList.add("fadeLabel");
 			setTimeout(function(){
-				input = document.getElementsByClassName("sc-dIfARi kuAjmt search-input")[0];
+				input = document.getElementsByClassName("sc-dIfARi search-input")[0];
 				//console.log(input);
 				input.addEventListener("keydown", (event) => {
 					setTimeout(function(){
@@ -1063,28 +1187,29 @@ top: 11px !important;*/
 
 function mouseOverUnity(){
 	//Menu unidades:
+	//console.log("unity over");
 	
 	//get unity buttom
-	unidades = document.getElementsByClassName("sc-iJnaPW exFzrr toogle-dropdown");
+	unidades = document.getElementsByClassName("sc-iJnaPW  toogle-dropdown");
 	//add mouse over/out listener		sc-gikAfH eYAQtw toogle-dropdown
 	if(unidades.length > 0 ){
 		
 		unidades[1].addEventListener("mouseover", (event) => {
 			//open
 			//console.log("over", unidades[1]);
-			if(document.getElementsByClassName("sc-hBxehG dnsJqu nav-modal").length == 0){
+			if(document.getElementsByClassName("sc-hBxehG nav-modal").length == 0){
 				//console.log("click");
 				unidades[1].click(function() {
-					console.log(document.getElementsByClassName("sc-hBxehG dnsJqu nav-modal"));
+					//console.log(document.getElementsByClassName("sc-hBxehG nav-modal"));
 				});
 				
-				bar = document.getElementsByClassName("sc-lllmON dVWbfY nav-item");
+				bar = document.getElementsByClassName("sc-lllmON nav-item");
 				for(i=2; i < bar.length; i++){
 					bar[i].addEventListener("mouseover", (event) => {
 						//close unity
 						//console.log("over bar");
 						//console.log(document.getElementsByClassName("sc-hBxehG dnsJqu nav-modal").length );
-						if(document.getElementsByClassName("sc-hBxehG dnsJqu nav-modal").length > 0){
+						if(document.getElementsByClassName("sc-hBxehG nav-modal").length > 0){
 							//console.log("bar ");
 							unidades[1].click(); 
 						}
@@ -1128,8 +1253,21 @@ function showMoreButton(){
 	//document.getElementById("dropdownMenuButton").click();
 	
 	
-	button = document.getElementById("more_posts");
-	if(button){
+	button = document.getElementsByClassName("carregar--mais");
+	//console.log(button);
+	if(button.length > 0){
+		if(button.length == 1){
+			button = button[0];
+		}
+		else if(button.length == 2){
+			button = button[0];
+		}
+		else if(button.length == 4){
+			button = button[1];
+		}
+		else{
+			button = button[0];
+		}
 		circle = document.getElementById("moreCircle")
 		if(circle){
 			if(circle.style.display == "none")
@@ -1158,13 +1296,18 @@ function showMoreButton(){
 			circle.style.position = "absolute";
 			
 			circle.addEventListener("click", (event) => { 
-				document.getElementById("more_posts").click();
+				button.click();
 			});
 			
 			
 			
 			//labelSearch.textContent = "Pesquisar no site";
+			//console.log(button.childNodes[0].offsetWidth);
+			circle.style.width = button.childNodes[0].offsetWidth + "px";
+			//console.log(circle.style.width, circle.offsetWidth)
 			button.parentNode.appendChild(circle);
+			//button.childNodes[0].style.width = "175px";
+			
 			appendStyleSheet("programCircleCSS", programCircleCSS)//.then(
 			circle.style.display = "block";
 			//alert("before setTimeout");
@@ -1401,7 +1544,7 @@ var unityOpen = false;
 window.addEventListener("load", myFunction);
 
 function myFunction(){
-	console.log("asdfadfasf");
+	//console.log("asdfadfasf");
 }
 /*function mouseOverItems(){
 	elements = document.getElementsByClassName("programacao--item--container");
