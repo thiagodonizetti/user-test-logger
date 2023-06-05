@@ -107,7 +107,7 @@ var methods = {
 				}
 				break;
 			case "scroll":
-				console.log('scroll');
+				//console.log('scroll');
 				var place = $(event.target);
 				extra = place.scrollLeft().toFixed(0) + 'x' + place.scrollTop().toFixed(0);
 				getScrollDirections();
@@ -150,7 +150,7 @@ var methods = {
 		if(!seen){
 			seen = 1;
 			$(window).trigger('pageview');
-			console.log("pageview");
+			//console.log("pageview");
 			lastScrollTop = window.pageYOffset || document.documentElement.scrollTop;
 			//console.log(document.getElementsByClassName("home--destaques")[0]);
 			//console.log(event.target.id);
@@ -221,7 +221,7 @@ function getScrollDirections(){
 		//console.log("out");
 		
 		
-		//Todo: send button highlight to ver mais when the button appears (offsetHeight); unidades
+		//Todo: send button highlight to ver mais when the button appears  --- done (offsetHeight); unidades
 		//console.log("down scroll");
 	} else if (st < lastScrollTop) {
 		 //console.log('scrollD', scrollDown);

@@ -1503,6 +1503,7 @@ function calcEccentricity(graph, callback){
 }
 
 function createGraph(loggerPack, callback){
+	
 	eventsModel = 0;
 	var graph = {
 		nodes : [],
@@ -1554,6 +1555,8 @@ function createGraph(loggerPack, callback){
 		
 	graph.addNode(start);
 	previousNode = start;
+	//console.log("degree 1", graph.links.length, graph.nodes.length, meanDegreeModel);
+	//console.log("log ", loggerPack);
 	
 	initialTs = Number( loggerPack[0][2] );
 	for(i = 0; i < 8; i++){
@@ -1641,6 +1644,7 @@ function createGraph(loggerPack, callback){
 	console.log(degreesI, degreesO, graph.nodes.length, degreesI/graph.nodes.length, degreesO/graph.nodes.length);*/
 	
 	meanDegreeModel = graph.links.length/graph.nodes.length;
+	//console.log("degree ", graph.links.length, graph.nodes.length, meanDegreeModel);
 	nodesNumberModel = graph.nodes.length;
 	linksNumberModel = graph.links.length;
 	
@@ -1670,7 +1674,7 @@ function sam(graph){
 			node.sam = 'regular';
 		}		
 	}
-	console.log("incidentes ", incidentesNumberModel);
+	//console.log("incidentes ", incidentesNumberModel);
 }
 
 //formatting timestamp -> human readable
@@ -1992,7 +1996,7 @@ function getClass(line, t1, t2, data){
 	if(keysNumber > 0){
 		//-console.log("keys timeout");
 		keysTotalTime += lastKey - firstKey;
-		console.log("keys "  + keysTotalTime);
+		//console.log("keys "  + keysTotalTime);
 		if(intervalNumber > 0){
 			meanTimeTyping = (keysTotalTime/intervalNumber)/1000;
 		}
@@ -2234,7 +2238,7 @@ function downloadCompleteHandler(tabId, changeInfo, tabInfo) {
 browser.webNavigation.onCompleted.addListener(downloadCompleteHandler, filter);
 
 
-var fileList = ["p1.2-log.json"];
+var fileList = ["B2//p19.2-log.json"];
 
 //["p6.json", "p7.json", "p11.json", "p12.json", "p14.json", "p17.json", "p18.json", "p19.json", "p20.json", "p21.json", "p22.json", "p23.json", "p24.json", "p25.json", "p26.json", "p27.json", "p28.json", "p29.json", "p31.json", "p32.json", "p33.json", "p34.json", "p35.json", "p36.json", "p37.json", "p38.json", "p40.json", "p42.json", "p43.json"];
 //var fileList = ["p27.json", "p28.json", "p29.json", "p31.json", "p32.json", "p33.json", "p34.json", "p35.json", "p36.json", "p37.json", "p38.json", "p40.json", "p42.json", "p43.json"];
@@ -2254,7 +2258,7 @@ function teste(){
 			return;
 		}
 		console.log("fileId", fileList.length, fileId, fileList);
-		var requestURL = "data//B2//"+fileList[fileId];
+		var requestURL = "data//"+fileList[fileId];
 		
 		//console.log(requestURL);
 		var request = new XMLHttpRequest();
@@ -2270,6 +2274,8 @@ function teste(){
 			var t1 = data[1][2];
 			var t2 = 0;
 			var deltaTime = data[1][2];
+			var buff = "";
+			//loggerPack = [];
 			data.forEach(function (line) {
 				countLines++;
 				loggerPack.push(line);
@@ -2280,7 +2286,9 @@ function teste(){
 					}
 				}
 				if(line[4] == "pause"){
-					t2 = line[2];
+					t2 = parseFloat(line[2]);
+					//console.log("t2 pause", t2);
+					buff = buff + "\n" + "t2 pause " + t2;
 				}
 				//loggerPack.push(m.line);
 				if(line[3] == "click")
@@ -2292,13 +2300,24 @@ function teste(){
 					dblclicks++;
 				}				
 				else if(line[3] == "beforeunload"){
-					getClass(line, t1, t2, data);
+					getClass(line, t1, t2, loggerPack);
+					t2 = parseFloat(line[2]);
+					//console.log("t2 beforeunload", t2);
+					buff = buff + "\n" + "t2 beforeunload " + t2;
 				}
 				else if(line[3] == "mousemove"){
 					moveHandlerModel(line);
 				}
 				else if(line[3] == "mousedown"){
 					mouseDownHandlerMOdel(line);
+				}
+				else if(line[3] == "metrics"){
+					//Done
+					getClass(line, t1, t2, loggerPack);
+					t2 = parseFloat(line[2]);
+					//console.log("t2 metrics", t2);
+					buff = buff + "\n" + "t2 metrics " + t2;
+					deltaTime = parseFloat(line[2]);
 				}
 				else if(line[3] == "mouseup" && mouseDownTime != 0){
 					//console.log("---mousoeup-----")
@@ -2325,7 +2344,7 @@ function teste(){
 				else{
 					current_time = parseFloat(line[2]);
 					
-					if(strokeLength > 0 && parseInt(line[2]) - currMoveModel > pauseThreshold){
+					if(strokeLength > 0 && current_time - currMoveModel > pauseThreshold){
 						
 						if(strokeLength == 0){
 							strokeDuration = straightness = 0;
@@ -2358,11 +2377,13 @@ function teste(){
 				}*/
 				//deltaTime = line[2] - t1;
 				//console.log("delta, t2, difference", deltaTime, line[2], line[2] - deltaTime);
-				if(line[2] - deltaTime > 10000){
+				if(parseFloat(line[2]) - deltaTime > 10000){
 					//console.log("delta, t2, difference", deltaTime, line[2], line[2] - deltaTime);
 					//console.log("Delta time", deltaTime);
-					deltaTime = line[2];
-					t2 = line[2];
+					deltaTime = parseFloat(line[2]);
+					t2 = parseFloat(line[2]);
+					//console.log("t2 deltaTime", t2);
+					buff = buff + "\n" + "t2 deltaTime " + t2;
 					timeStampToLog = t2;
 					//console.log(timeStampToLog);
 					taskTotalTime = (t2 - t1)/1000;
@@ -2396,13 +2417,13 @@ function teste(){
 					/*createGraph(data, (graph)=> {
 						calcEccentricity(graph, anxietyLevel);
 					});*/
-					createGraph(data, (graph)=> {
+					createGraph(loggerPack, (graph)=> {
 						calcEccentricity(graph, readJsonTree);
 						
 						if(keysNumber > 0){
 							
 							keysTotalTime -= lastKey - firstKey;
-							console.log("keys 2**"  + keysTotalTime);
+							//console.log("keys 2**"  + keysTotalTime);
 						}
 					});
 					
@@ -2412,7 +2433,8 @@ function teste(){
 			
 			taskTotalTime = (t2 - t1)/1000;
 			timeStampToLog = t2;
-			
+			buff = buff + "\n" + "t2 deltaTime " + t2;
+			//console.log("buffer -------- \n", buff);
 			
 			if(strokes > 0){
 				meanStrokeDuration = (strokeDurationSum/strokes)/1000;			
@@ -2424,9 +2446,11 @@ function teste(){
 				keyMetricsHandler();
 			} 
 		
-			createGraph(data, (graph)=> {
+			createGraph(loggerPack, (graph)=> {
 				calcEccentricity(graph, readJsonTree);
-				console.log("Final Time", taskTotalTime);
+				//console.log("Final Time, t2", taskTotalTime, t2);
+				
+				
 				
 				var downlog = browser.extension.getURL('download/downloadLog.html');
 				console.log( downlog );							

@@ -742,9 +742,9 @@ function map(){
 }
 
 function addRoutesLabel(){
-	console.log("routes label");
+	//console.log("routes label");
 	var routes = document.getElementsByClassName("m6QErb");
-	console.log(routes);
+	//console.log(routes);
 	if(routes.length > 0){
 		
 		routesLabel = document.getElementById("routesLabel");
@@ -783,12 +783,12 @@ function addRoutesLabel(){
 			
 			routes[index].addEventListener("click", (event) => {
 				document.getElementById("labelAdress").style.display = "none";
-				console.log("direction");
+				//console.log("direction");
 				setTimeout(function(){
 					
 					document.getElementsByClassName("ysKsp")[0].addEventListener("click", (event) => {
 						setTimeout(function(){
-							console.log("volta");						
+							//console.log("volta");						
 							addRoutesLabel();
 							if(document.getElementById("labelAdress")){
 								document.getElementById("labelAdress").style.display = "block";
