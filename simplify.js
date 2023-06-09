@@ -1037,6 +1037,11 @@ top: 11px !important;*/
 	if(logo != ""){
 		//console.log(logo.classList);
 		logo.appendChild(labelLogo);
+		console.log(logo)
+		labelLogo.addEventListener("click", (event) => {
+			logo.click();
+			
+		});
 		
 		logo.addEventListener("mouseover", (event) => {		
 			document.getElementById("labelLogo").classList.remove("fadeLabel");
@@ -1051,6 +1056,8 @@ top: 11px !important;*/
 			document.getElementById("labelLogo").classList.add("fadeLabel");
 			
 		});
+		
+		
 		
 		document.getElementById("labelLogo").style.visibility = "visible";
 		//labelLogo.style.top = "55px";
@@ -1103,6 +1110,11 @@ top: 11px !important;*/
 		labelSearch.id = "labelBusca";
 		labelSearch.textContent = "Pesquisar no site";
 		icons[0].appendChild(labelSearch);
+		
+		labelSearch.addEventListener("click", (event) => {
+			icons[0].click();
+			
+		});
 		
 		//label.addEventListener("mouseover", (event) => {label.classList.add("fadeLabel");});		
 	
@@ -1158,6 +1170,11 @@ top: 11px !important;*/
 		labelPerfil.id = "labelPerfil";
 		labelPerfil.textContent = "Perfil";
 		icons[1].appendChild(labelPerfil);
+		
+		labelPerfil.addEventListener("click", (event) => {
+			icons[1].click();
+			
+		});
 		//appendStyleSheet("cssBusca", cssBusca);
 		//label.addEventListener("mouseover", (event) => {label.classList.add("fadeLabel");});		
 		
