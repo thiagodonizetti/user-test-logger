@@ -97,7 +97,7 @@ pageContentCSS = `
 		font-size: 15px !important;
 	}
 	
-	.footer a:hover, #footer a:hover  {
+	.footer a:hover, #main_footer a:hover  {
 		color: white !important;
 	}
 	
