@@ -97,6 +97,12 @@ pageContentCSS = `
 		font-size: 15px !important;
 	}
 	
+	.footer a:hover, #footer a:hover  {
+		color: white !important;
+	}
+	
+	
+	
 `;
 
 programCircleCSS = `
@@ -1413,6 +1419,7 @@ function menuLinks(){
 	
 	styles.push("a{text-decoration: underline !important; font-weight: 800 !important; font-size: 18px !important; color: #3477C8 !important}");
 	styles.push("a:hover{text-decoration: underline !important; font-weight: 800 !important; font-size: 18px !important; color: darkblue !important}");
+	styles.push(".footer a:hover{color: darkblue !important}");
 	/*
 		.fNCgwt {
 			max-height: 433px;
