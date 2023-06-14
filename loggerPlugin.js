@@ -288,10 +288,10 @@ function bindEvents(){
 }
 
 // --- alarm timeout
-	
+
 var metricsTimeOut = {
 	timeOut: function(aMessage) {
-		console.log(aMessage);
+		//console.log(aMessage);
 		//reset time
 		delete this.timeoutID;
 		this.cancelar();
@@ -315,10 +315,11 @@ var metricsTimeOut = {
 	},
 
 	setup: function() {
+		//console.log("TIME ID", this.timeoutID);
 		if (typeof this.timeoutID === 'number') {
 			this.cancelar();
 		}
-		console.log("TIMEOUT");
+		//console.log("TIMEOUT");
 
 		this.timeoutID = window.setTimeout(function(msg) {
 			this.timeOut(msg);
@@ -348,7 +349,7 @@ function messageReceiver(message){
 		case 'record':
 			console.log('rec');
 			if(!timeStart){
-				metricsTimeOut.setup();
+				//metricsTimeOut.setup();
 				timeStart = 1;
 			}
 			//0----- teste

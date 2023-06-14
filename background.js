@@ -212,6 +212,7 @@ browser.contextMenus.onClicked.addListener((info, tab) => {
 });
 
 	var testing = false;
+	var timeoutTab = "";
 	var normTime = false;
 	var jump = true;
 	var tree = "";
@@ -645,7 +646,26 @@ browser.contextMenus.onClicked.addListener((info, tab) => {
 						}
 						else if(m.line[3] == "metrics"){
 							//Done
-							metricsTimeHandler(m.line);
+							getActiveTab().then((tabs) => {
+								console.log("tab", tabs[0].id,m.line[0]);
+								if(tabs[0].id == m.line[0]){
+									metricsTimeHandler(m.line);
+								}
+								
+							});
+							
+							
+							/*if(timeoutTab == ""){
+								metricsTimeHandler(m.line);
+								timeoutTab = m.line[0];
+							}
+							else{
+								if(timeoutTab == m.line[0])
+								{
+									metricsTimeHandler(m.line);
+								}
+							}*/
+							
 						}
 						//New Tree: Including mean click duration
 						else if(m.line[3] == "mouseup" && mouseDownTime != 0){
